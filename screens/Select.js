@@ -88,13 +88,13 @@ export default SelectPage;
 const styles = StyleSheet.create({
     card: {
         backgroundColor:"#fff", 
-        borderRadius:"8px", 
+        borderRadius:8, 
         overflow:"hidden",
 
         display:"flex",
         flexDirection:"row",
-        height:"80px",
-        marginVertical:"8px",
+        height:80,
+        marginVertical:8,
 
 
         shadowColor: "#000",
