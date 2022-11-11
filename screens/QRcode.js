@@ -9,7 +9,7 @@ import {
 import { TouchableOpacity } from 'react-native';
 import { StyleSheet} from "react-native";
 import { Camera, CameraType, PermissionStatus } from 'expo-camera';
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
 
 function QRcodePage({navigation}) {
@@ -51,7 +51,7 @@ function QRcodePage({navigation}) {
       <Camera style={styles.camera} type={type} onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} ratio="16:9">
         <View style={styles.textContainer}>
           <Text style={[styles.text,{}]}>แสกน QR Code</Text>
-          <Icon as={MaterialCommunityIcons} name="scan-helper" color="black" size="40"/>
+          <Icon as={MaterialCommunityIcons} name="scan-helper" color="white" size="200"/>
           <Text style={[styles.text,{}]}>ไปที่เครื่องซักผ้าที่คุณเลือกแล้วสแกน QR Code หน้าเครื่อง</Text>
         </View>
       </Camera>
