@@ -10,12 +10,17 @@ import { TouchableOpacity } from 'react-native';
 import { StyleSheet} from "react-native";
 import { Camera, CameraType, PermissionStatus } from 'expo-camera';
 import { AntDesign } from "@expo/vector-icons";
+import { useIsFocused } from '@react-navigation/native';
 
-function QRcodePage() {
+function QRcodePage({navigation}) {
   const [scanned, setScanned] = useState(false);
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
-  requestPermission()
+  const isFocused = useIsFocused()
+
+  if(!isFocused){
+    return null;
+  }
   if (!permission) {
     // Camera permissions are still loading
     return <View />;
@@ -41,6 +46,7 @@ function QRcodePage() {
 
 
   return (
+    
     <View style={styles.container}>
       <Camera style={styles.camera} type={type} onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} ratio="16:9">
         <View style={styles.textContainer}>
