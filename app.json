@@ -15,13 +15,21 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.Washy",
+      "config": {
+        "googleMapsApiKey": "AIzaSyAxblC8-b5luUUobn7YWvGV5G9eQxREafg"
+      }
     },
     "android": {
+      "package": "com.example.Washy",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAxblC8-b5luUUobn7YWvGV5G9eQxREafg"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
