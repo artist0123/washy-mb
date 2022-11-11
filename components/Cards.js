@@ -6,8 +6,8 @@ import {
 } from "@expo/vector-icons";
 import { Center, Box, Text, Icon } from "native-base";
 import { StyleSheet, TouchableOpacity } from "react-native";
-export default function Cards ({ item, layout, onPress }) {
-    
+export default function Cards({ item, layout, onPress }) {
+  console.log("w: " + layout.width + " h: " + layout.height);
   // Ready State
   if (item.state == "ok") {
     return (
@@ -66,8 +66,22 @@ export default function Cards ({ item, layout, onPress }) {
         </Box>
       </TouchableOpacity>
     );
+  } else {
+    return (
+      <Center h="100%" mb="3%">
+        <Icon
+            as={MaterialCommunityIcons}
+            name="null"
+            color="primary.100"
+            size="125"
+          />
+        <Text  fontSize="xl" flex={1}>
+          ไม่มีการซัก
+        </Text>
+      </Center>
+    );
   }
-};
+}
 
 // display="flex" flexDirection="row" h="24" w={layout.width} my="2%"
 const styles = StyleSheet.create({

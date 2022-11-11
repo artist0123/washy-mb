@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { useKeenSliderNative } from "keen-slider/react-native";
 import { Dimensions, StyleSheet } from "react-native";
-import { Center, Stack, FlatList, View, Image, Text } from "native-base";
+import { Stack, Button, Image, Box, Text, Divider, Icon } from "native-base";
 import Cards from "../components/Cards";
+import { Entypo, Ionicons } from '@expo/vector-icons';
 
 function MainPage() {
-  const [windowsWidth, setWindowsWidth] = useState(Dimensions.get("window").width);
+  const [windowsWidth, setWindowsWidth] = useState(
+    Dimensions.get("window").width
+  );
+  const height16_9 = (windowsWidth / 16) * 9;
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const images = [
     "https://images.pexels.com/photos/2254065/pexels-photo-2254065.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
@@ -18,48 +22,117 @@ function MainPage() {
     slides,
     loop: true,
   });
-  const wmachines = [
-    { id: "1", name: "เครื่องซักผ้า1", capacity: 10, state: "ok" },
-    { id: "2", name: "เครื่องซักผ้า2", capacity: 40, state: "queue" },
-    { id: "3", name: "เครื่องซักผ้า3", capacity: 32, state: "notok" },
-    { id: "4", name: "เครื่องซักผ้า4", capacity: 32, state: "ok" },
-  ];
-
-  const renderCard = ({ item }) => {
-    return <Cards item={item} onPress={() => {}} layout={{ layout }}></Cards>;
+  const wmachine = {
+    id: "1",
+    name: "เครื่องซักผ้า1",
+    capacity: 10,
+    state: "okss",
   };
+
   return (
-    <Center bg="primary.400">
-      <Stack direction="column" space="3">
-        <View style={styles.slider} {...slider.containerProps}>
+    <Box bg="primary.400" size="full" flex={1} alignItems="stretch">
+      <Stack direction="column" space="3" flex={1}>
+        <Box
+          flex={1}
+          w={windowsWidth}
+          h={height16_9}
+          overflow="hidden"
+          bg="primary.200"
+          {...slider.containerProps}
+        >
           {[...Array(slides).keys()].map((key) => {
             return (
-              <View key={key} {...slider.slidesProps[key]}>
-                <View style={{ ...styles.slide }}>
+              <Box key={key} {...slider.slidesProps[key]}>
+                <Box w={windowsWidth} h={height16_9}>
                   <Image
+                    overflow="hidden"
                     source={{
                       uri: images[key],
                     }}
-                    size={windowsWidth}
+                    w={windowsWidth}
+                    h={height16_9}
                     alt="Main"
                   />
-                </View>
-              </View>
+                </Box>
+              </Box>
             );
           })}
-        </View>
-        );
-      </Stack>
-
-      <Stack direction="column" space="3">
-        <FlatList
-          data={wmachines}
-          renderItem={renderCard}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ alignItems: "flex-start" }}
+        </Box>
+        <Divider
+          alignSelf="center"
+          bg="primary.300"
+          w="300"
+          thickness="3"
+          mx="3%"
+          orientation="horizontal"
         />
+        <Stack
+          direction="row"
+          mx="3%"
+          space="3"
+          flex={1}
+          alignItems="stretch"
+          justifyItems="stretch"
+        >
+         
+          <Button
+            h={"100%"}
+            flexGrow="1"
+            colorScheme="primary"
+            variant={"solid"}
+            startIcon={<Icon size="md" as={Entypo} name="location-pin" color="white" />}
+            onPress={() => {
+              console.log("hello");
+            }}
+          >
+            ค้นหาร้านซักผ้า
+          </Button>
+          <Button
+            h={"100%"}
+            variant={"solid"}
+            startIcon={<Icon size="md" as={Ionicons} name="person" color="white" />}
+            colorScheme="info"
+            onPress={() => {
+              console.log("hello");
+            }}
+          >
+            ล็อกอินพนักงาน
+          </Button>
+        </Stack>
+        <Divider
+          alignSelf="center"
+          bg="primary.300"
+          w="300"
+          thickness="3"
+          mx="3%"
+          orientation="horizontal"
+        />
+        <Stack direction="column" space="3" flex={1}>
+          <Box
+            bg="primary.200"
+            mx="3%"
+            h="full"
+            display={"flex"}
+            flexDirection="column"
+            rounded="md"
+            p="3%"
+          >
+            <Box h="6" mb="3%">
+              <Text fontWeight="bold" fontSize="xl" flex={1}>
+                การซักของคุณ
+              </Text>
+            </Box>
+
+            <Box
+              flex={8}
+              onLayout={(event) => setLayout(event.nativeEvent.layout)}
+            >
+              <Cards item={wmachine} onPress={() => {}} layout={layout}></Cards>
+            </Box>
+          </Box>
+        </Stack>
       </Stack>
-    </Center>
+    </Box>
   );
 }
 
@@ -68,11 +141,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     overflow: "hidden",
     width: "100%",
-    height: "40%",
+    height: "30%",
   },
   slide: {
     width: "100%",
-    height: "40%",
+    height: "30%",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "black",
