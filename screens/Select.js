@@ -11,8 +11,7 @@ import {
 } from "native-base";
 import { AntDesign,Octicons,MaterialCommunityIcons  } from "@expo/vector-icons";
 import { useState } from "react";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { StyleSheet } from "react-native";
+import { StyleSheet,  TouchableOpacity  } from "react-native";
 
 
 function SelectPage() {
@@ -30,7 +29,7 @@ function SelectPage() {
             <Center flex={2} bg="coolGray.300">
                 <Icon as={AntDesign} name="checkcircle" color="#00f710" size="7"/>
             </Center>
-            <Box flex={7} p="5%">
+            <Box flex={7} p="3">
                 <Text fontWeight={"bold"} fontSize="lg">{item.name}</Text>
                 <Text fontSize={"sm"} color="#454545">{item.capacity} กิโลกรัม</Text>
             </Box>
@@ -42,7 +41,7 @@ function SelectPage() {
                 <Center flex={2} bg="coolGray.300">
                     <Icon as={MaterialCommunityIcons } name="washing-machine" color="black" size="7"/>
                 </Center>
-                <Box flex={7} p="5%">
+                <Box flex={7} p="3">
                     <Text fontWeight={"bold"} fontSize="lg">{item.name}</Text>
                     <Text fontSize={"sm"} color="#454545">อีก 40 นาที(1 คิว)</Text>
                 </Box>
@@ -54,7 +53,7 @@ function SelectPage() {
                 <Center flex={2} bg="coolGray.300">
                     <Icon as={Octicons} name="x-circle-fill" color="#fa1616" size="7"/>
                 </Center>
-                <Box flex={7} p="5%">
+                <Box flex={7} p="3">
                     <Text fontWeight={"bold"} fontSize="lg">{item.name}</Text>
                     <Text fontSize={"sm"} color="#454545">งดให้บริการชั่วคราว</Text>
                 </Box>
@@ -69,7 +68,7 @@ function SelectPage() {
         <Box bg="primary.200" mx="3%" h="60%" display={"flex"} flexDirection="column">
             <Text fontWeight="bold" fontSize="4xl" flex={1}>ร้าน C</Text>
             <Text fontSize="md" flex={1}>100 เมตร</Text>
-            <Box mt="3%" flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
+            <Box  flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
                 <FlatList 
                     data={wmachines} 
                     renderItem={cards} 
@@ -94,7 +93,7 @@ const styles = StyleSheet.create({
         display:"flex",
         flexDirection:"row",
         height:80,
-        marginVertical:8,
+        marginBottom:8,
 
 
         shadowColor: "#000",
