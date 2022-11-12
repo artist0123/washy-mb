@@ -20,6 +20,7 @@
     "expo-camera": "~12.3.0",
     "expo-location": "~14.3.0",
     "expo-status-bar": "~1.4.0",
+    "firebase": "^9.14.0",
     "keen-slider": "^6.8.3",
     "native-base": "^3.4.19",
     "nativewind": "^2.0.11",
