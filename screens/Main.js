@@ -70,7 +70,7 @@ function MainPage() {
           direction="row"
           mx="3%"
           space="3"
-          flex={1}
+          flex={0.5}
           alignItems="stretch"
           justifyItems="stretch"
         >
