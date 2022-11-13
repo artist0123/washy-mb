@@ -96,13 +96,13 @@ function QueuePage() {
         <Modal isOpen={modalVisible} onClose={setModalVisible} size={"md"}>
         <Modal.Content maxH="212">
           <Modal.CloseButton />
-          <Modal.Header>{"คุณต้องการที่จะลบ "+(!chooseItem?"None":chooseItem.name)+"?"}</Modal.Header>
+          <Modal.Header>{"คุณต้องการที่จะนำ "+(!chooseItem?"None":chooseItem.name)+" ออกจากคิว?"}</Modal.Header>
           <Modal.Footer justifyContent={"flex-start"}>
             <Button.Group space={2}>
                 <Button colorScheme={"red"} onPress={() => {
                   setModalVisible(false);onDelete(chooseItem.id)
                 }}>
-                    {"ลบ "+(!chooseItem?"None":chooseItem.name)}
+                    {"นำ "+(!chooseItem?"None":chooseItem.name)+" ออก"}
                 </Button>
                 <Button variant="ghost" colorScheme="blueGray" onPress={() => {
                     setModalVisible(false);setChooseItem(null)
