@@ -9,7 +9,8 @@ import {
   FlatList,
   Icon,
   Button,
-  IconButton
+  IconButton,
+  Modal
 } from "native-base";
 import { AntDesign,Octicons,MaterialCommunityIcons ,FontAwesome5 } from "@expo/vector-icons";
 import { useState } from "react";
@@ -18,6 +19,8 @@ import { StyleSheet,  TouchableOpacity ,ActivityIndicator } from "react-native";
 
 function ManagePage() {
     const [layout, setLayout] = useState({width: 0,height: 0})
+    const [modalVisible,setModalVisible] = useState(false)
+    const [chooseItem, setChooseItem] = useState(null)
     const [mode, setMode] = useState(false)
     const [wmachines, setWmachines] = useState([
         {id:"1",name:"เครื่องซักผ้า1",capacity:10, state:"ok"},
@@ -41,6 +44,7 @@ function ManagePage() {
                 return val
             }
         }))
+        setChooseItem(null)
     }
     const cards = ({item})=>{
         // Ready State
@@ -54,7 +58,7 @@ function ManagePage() {
                 <Text fontSize={"sm"} color="#454545">{item.capacity} กิโลกรัม</Text>
             </Box>
             <Box flex={2}>
-                <IconButton colorScheme="red" style={{display:mode?"flex":"none"}} onPress={()=>{onDelete(item.id)}} variant="ghost" _icon={{
+                <IconButton colorScheme="red" style={{display:mode?"flex":"none"}} onPress={()=>{setChooseItem(item);setModalVisible(true)}} variant="ghost" _icon={{
                     as: FontAwesome5,
                     name: "trash"
                 }} flex={1}/>
@@ -74,7 +78,7 @@ function ManagePage() {
                     
                 </Box>
                 <Box flex={2}>
-                    <IconButton colorScheme="red" style={{display:mode?"flex":"none"}} onPress={()=>{onDelete(item.id)}} variant="ghost" _icon={{
+                    <IconButton colorScheme="red" style={{display:mode?"flex":"none"}} onPress={()=>{setChooseItem(item);setModalVisible(true)}} variant="ghost" _icon={{
                     as: FontAwesome5,
                     name: "trash"
                     }} flex={1}/>
@@ -95,7 +99,7 @@ function ManagePage() {
                     <Text fontSize={"sm"} color="#454545">งดให้บริการชั่วคราว</Text>
                 </Box>
                 <Box flex={2}>
-                    <IconButton colorScheme="red" style={{display:mode?"flex":"none"}} onPress={()=>{onDelete(item.id)}} variant="ghost" _icon={{
+                    <IconButton colorScheme="red" style={{display:mode?"flex":"none"}} onPress={()=>{setChooseItem(item);setModalVisible(true)}} variant="ghost" _icon={{
                     as: FontAwesome5,
                     name: "trash"
                     }} flex={1}/>
@@ -108,7 +112,7 @@ function ManagePage() {
         <Box bg="primary.200" mx="3" flex={1} display={"flex"} flexDirection="column">
             <Box px="8" mt="5"  flex={1} display="flex" alignItems="center" flexDirection={"row"} justifyContent={"space-between"}>
                 <Text fontWeight="bold" fontSize="4xl">ร้าน C </Text>
-                <Button onPress={()=>{setMode(!mode)}} style={{height:"50%"}}>{mode?"Back":"Add/Delete"}</Button>
+                <Button onPress={()=>{setMode(!mode)}} style={{height:"50%"}}>{mode?"กลับ":"เพิ่ม/ลบ"}</Button>
             </Box>
             <Box  flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
                 <FlatList 
@@ -117,9 +121,33 @@ function ManagePage() {
                     keyExtractor={item=>item.id} 
                     contentContainerStyle={{alignItems:"flex-start"}}
                 ></FlatList>
-                <Button onPress={()=>{addMachine()}} backgroundColor="#00f710" style={{display:mode?"flex":"none"}}>Add</Button>
+                <Button onPress={()=>{addMachine()}} backgroundColor="#00f710" style={{display:mode?"flex":"none"}}>เพิ่ม</Button>
             </Box>
         </Box>
+
+
+        {/* Modal */}
+        <Modal isOpen={modalVisible} onClose={setModalVisible} size={"md"}>
+        <Modal.Content maxH="212">
+          <Modal.CloseButton />
+          <Modal.Header>{"คุณต้องการที่จะลบ "+(!chooseItem?"None":chooseItem.name)+"?"}</Modal.Header>
+          <Modal.Footer justifyContent={"flex-start"}>
+            <Button.Group space={2}>
+                <Button colorScheme={"red"} onPress={() => {
+                  setModalVisible(false);onDelete(chooseItem.id)
+                }}>
+                    {"ลบ "+(!chooseItem?"None":chooseItem.name)}
+                </Button>
+                <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+                    setModalVisible(false);setChooseItem(null)
+                }}>
+                    ยกเลิก
+                </Button>
+              
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
         
     </Box>
   );

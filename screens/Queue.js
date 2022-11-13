@@ -9,7 +9,8 @@ import {
   FlatList,
   Icon,
   Button,
-  IconButton
+  IconButton,
+  Modal
 } from "native-base";
 import { AntDesign,Octicons,MaterialCommunityIcons ,FontAwesome5 } from "@expo/vector-icons";
 import { useState } from "react";
@@ -18,6 +19,8 @@ import { StyleSheet,  TouchableOpacity ,ActivityIndicator } from "react-native";
 
 function QueuePage() {
     const [layout, setLayout] = useState({width: 0,height: 0})
+    const [modalVisible,setModalVisible] = useState(false)
+    const [chooseItem, setChooseItem] = useState(null)
     const [queues, setQueues] = useState([
         {id:"1",name:"Huawei1",reserve_date:new Date(), state:"ok"},
         {id:"2",name:"Iphone1",reserve_date:new Date("2022-09-15T12:23:51Z"),state:"queue"},
@@ -45,7 +48,7 @@ function QueuePage() {
                 <Text fontSize={"sm"} color="#454545">เวลาจอง: {getTimeFromDate(item.reserve_date)} น.</Text>
             </Box>
             <Box flex={2}>
-                <IconButton colorScheme="red"  onPress={()=>{onDelete(item.id)}} variant="ghost" _icon={{
+                <IconButton colorScheme="red"  onPress={()=>{setChooseItem(item);setModalVisible(true)}} variant="ghost" _icon={{
                     as: FontAwesome5,
                     name: "trash"
                 }} flex={1}/>
@@ -65,7 +68,7 @@ function QueuePage() {
                     
                 </Box>
                 <Box flex={2}>
-                    <IconButton colorScheme="red" onPress={()=>{onDelete(item.id)}} variant="ghost" _icon={{
+                    <IconButton colorScheme="red" onPress={()=>{setChooseItem(item);setModalVisible(true)}} variant="ghost" _icon={{
                     as: FontAwesome5,
                     name: "trash"
                     }} flex={1}/>
@@ -86,6 +89,31 @@ function QueuePage() {
                 ></FlatList>
             </Box>
         </Box>
+
+
+
+        {/* Modal */}
+        <Modal isOpen={modalVisible} onClose={setModalVisible} size={"md"}>
+        <Modal.Content maxH="212">
+          <Modal.CloseButton />
+          <Modal.Header>{"คุณต้องการที่จะลบ "+(!chooseItem?"None":chooseItem.name)+"?"}</Modal.Header>
+          <Modal.Footer justifyContent={"flex-start"}>
+            <Button.Group space={2}>
+                <Button colorScheme={"red"} onPress={() => {
+                  setModalVisible(false);onDelete(chooseItem.id)
+                }}>
+                    {"ลบ "+(!chooseItem?"None":chooseItem.name)}
+                </Button>
+                <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+                    setModalVisible(false);setChooseItem(null)
+                }}>
+                    ยกเลิก
+                </Button>
+              
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+        </Modal>
         
     </Box>
   );
