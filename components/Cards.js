@@ -5,7 +5,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { Center, Box, Text, Icon } from "native-base";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 export default function Cards({ item, layout, onPress }) {
   console.log("w: " + layout.width + " h: " + layout.height);
   // Ready State
@@ -13,7 +13,7 @@ export default function Cards({ item, layout, onPress }) {
     return (
       <TouchableOpacity style={[styles.card, { width: layout.width }]}>
         <Center flex={2} bg="coolGray.300">
-          <Icon as={AntDesign} name="checkcircle" color="#00f710" size="7" />
+          <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9" />
         </Center>
         <Box flex={7} p="3">
           <Text fontWeight={"bold"} fontSize="lg">
@@ -31,12 +31,8 @@ export default function Cards({ item, layout, onPress }) {
     return (
       <TouchableOpacity style={[styles.card, { width: layout.width }]}>
         <Center flex={2} bg="coolGray.300">
-          <Icon
-            as={MaterialCommunityIcons}
-            name="washing-machine"
-            color="black"
-            size="7"
-          />
+          {/* <Icon as={MaterialCommunityIcons } name="washing-machine" color="black" size="7"/> */}
+          <ActivityIndicator size="large" color="#6fade1" />
         </Center>
         <Box flex={7} p="3">
           <Text fontWeight={"bold"} fontSize="lg">
@@ -54,7 +50,7 @@ export default function Cards({ item, layout, onPress }) {
     return (
       <TouchableOpacity style={[styles.card, { width: layout.width }]}>
         <Center flex={2} bg="coolGray.300">
-          <Icon as={Octicons} name="x-circle-fill" color="#fa1616" size="7" />
+          <Icon as={Octicons} name="x-circle-fill" color="#fa1616" size="9" />
         </Center>
         <Box flex={7} p="3">
           <Text fontWeight={"bold"} fontSize="lg">
