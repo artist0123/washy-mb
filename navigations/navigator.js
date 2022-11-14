@@ -11,6 +11,9 @@ import QueuePage from "../screens/Queue";
 import MapPage from "../screens/Map";
 import ReservePage from "../screens/Reserve";
 import StatusPage from "../screens/Status";
+import LoginPage from "../screens/Login";
+import EditPage from "../screens/Edit";
+
 
 const Tab = createBottomTabNavigator();
 
@@ -26,6 +29,8 @@ function TabsNavigator(){
             <Tab.Screen name="Queue" component={QueuePage} options={{title:"Qเครื่องซักผ้า1"}}></Tab.Screen>
             <Tab.Screen name="Reserve" component={ReservePage} options={{title:"จองคิว",headerShown:false}}></Tab.Screen>
             <Tab.Screen name="Status" component={StatusPage} options={{title:"สถานะ",headerShown:false}}></Tab.Screen>
+            <Tab.Screen name="Login" component={LoginPage} options={{title:"ล็อกอิน",headerShown:false}}></Tab.Screen>
+            <Tab.Screen name="Edit" component={EditPage} options={{title:"edit",headerShown:false}}></Tab.Screen>
         </Tab.Navigator>
     );
 }

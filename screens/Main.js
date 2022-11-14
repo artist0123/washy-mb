@@ -5,7 +5,7 @@ import { Stack, Button, Image, Box, Text, Divider, Icon } from "native-base";
 import Cards from "../components/Cards";
 import { Entypo, Ionicons } from '@expo/vector-icons';
 
-function MainPage() {
+function MainPage({navigation}) {
   const [windowsWidth, setWindowsWidth] = useState(
     Dimensions.get("window").width
   );
@@ -93,6 +93,7 @@ function MainPage() {
             startIcon={<Icon size="md" as={Ionicons} name="person" color="white" />}
             colorScheme="info"
             onPress={() => {
+              navigation.navigate("Login");
               console.log("hello");
             }}
           >
