@@ -25,16 +25,18 @@ import {
 import { useState, useEffect } from "react";
 import { StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 
-function SelectPage() {
+function SelectPage({ route, navigation }) {
+  const { laundry } = route.params;
+  console.log("laundry = ", laundry);
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const [wmachines, setWmachines] = useState([]);
   useEffect(() => {
     // onSnapshot(collection(db, "laundromat"), (snapshot) => {
     //   setWmachines(...snapshot.docs.map((doc) => {console.log(doc.id);return doc.get("wmachines")}));
     // });
-    onSnapshot(doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s"), (snapshot) => {
-      console.log(snapshot.data().wmachines)
-      setWmachines(snapshot.data().wmachines)
+    onSnapshot(doc(db, "laundromat", laundry.docId), (snapshot) => {
+      console.log(snapshot.data().wmachines);
+      setWmachines(snapshot.data().wmachines);
     });
   }, []);
   console.log(wmachines);
@@ -114,10 +116,10 @@ function SelectPage() {
         flexDirection="column"
       >
         <Text fontWeight="bold" fontSize="4xl" flex={1}>
-          ร้าน C
+          {laundry.name}
         </Text>
         <Text fontSize="md" flex={1}>
-          100 เมตร
+          {laundry.distance} เมตร
         </Text>
         <Box flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
           <FlatList
