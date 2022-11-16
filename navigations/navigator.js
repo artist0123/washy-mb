@@ -47,25 +47,25 @@ function HomeNavigator() {
 }
 
 function ManageLaunToMachine() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="ManageLaund"
-        component={ManageLaundPage}
-      ></Stack.Screen>
-      <Stack.Screen name="Manage" component={ManagePage}></Stack.Screen>
-      <Stack.Screen
-        name="Queue"
-        component={QueuePage}
-        options={({ route }) => ({ title: route.params.machineName })}
-      ></Stack.Screen>
-    </Stack.Navigator>
-  );
+    return(
+        <Stack.Navigator>
+            <Stack.Screen name="ManageLaund" component={ManageLaundPage}></Stack.Screen>
+            <Stack.Screen name="Manage" component={ManagePage}></Stack.Screen>
+            <Stack.Screen name="Edit" component={EditPage} 
+            options={({ route }) => ({
+                title: route.params.machineName.toString()})}></Stack.Screen>
+            <Stack.Screen
+                name="Queue"
+                component={QueuePage}
+                options={({ route }) => ({ title: route.params.machineName })}
+            ></Stack.Screen>
+        </Stack.Navigator>
+    );
 }
 
-function TabsNavigator() {
-  return (
-    <Tab.Navigator>
+function TabsNavigator(){
+    return(
+        <Tab.Navigator>
       <Tab.Screen
         name="Home"
         component={HomeNavigator}
@@ -96,17 +96,12 @@ function TabsNavigator() {
         options={{ title: "สถานะ", headerShown: false }}
       ></Tab.Screen>
       <Tab.Screen
-        name="Edit"
-        component={EditPage}
-        options={{ title: "edit", headerShown: false }}
-      ></Tab.Screen>
-      <Tab.Screen
         name="ManageLaund"
         component={ManageLaunToMachine}
         options={{ title: "man", headerShown: false }}
       ></Tab.Screen>
     </Tab.Navigator>
-  );
+    );
 }
 
 export default function MainNavigator() {

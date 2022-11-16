@@ -1,5 +1,5 @@
 import React from "react";
-import { db, auth } from "../database/firebaseDB";
+import {db} from "../database/firebaseDB";
 import {
   collection,
   getDocs,
@@ -48,9 +48,6 @@ function ManageLaundPage({ navigation }) {
     });
   }, []);
 
-  console.log(id);
-  console.log(laundromat);
-  console.log(laundromat[0]);
 
   const addMachine = () => {
     setlaundromat([
@@ -132,8 +129,9 @@ function ManageLaundPage({ navigation }) {
           justifyContent={"space-between"}
         >
           <Text fontWeight="bold" fontSize="4xl">
-            รายชื่อร้านซักผ้า
+           ร้านซักผ้า
           </Text>
+          <Button onPress={   ()=>{}} style={{height:"50%"}} mr="3">แก้ไขเครื่อง</Button>
           <Button
             onPress={() => {
               setMode(!mode);
@@ -147,7 +145,7 @@ function ManageLaundPage({ navigation }) {
           <FlatList
             data={laundromat}
             renderItem={cards}
-            keyExtractor={(item) => item.name}
+            keyExtractor={(item) => item.laundromat.name}
             contentContainerStyle={{ alignItems: "flex-start" }}
           ></FlatList>
           <Button
