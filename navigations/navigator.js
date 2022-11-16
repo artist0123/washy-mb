@@ -35,6 +35,7 @@ function ManageLaunToMachine() {
         <Stack.Navigator>
             <Stack.Screen name="ManageLaund" component={ManageLaundPage}></Stack.Screen>
             <Stack.Screen name="Manage" component={ManagePage}></Stack.Screen>
+            <Stack.Screen name="Queue" component={QueuePage} options={({route})=>({title:route.params.machineName})}></Stack.Screen>
         </Stack.Navigator>
     );
 }
@@ -48,7 +49,7 @@ function TabsNavigator(){
             <Tab.Screen name="Select" component={SelectPage} options={{title:"ร้าน C",headerShown:false}}></Tab.Screen>
             <Tab.Screen name="QRcode" component={QRcodePage} options={{title:"แสกน QR Code",headerShown:false}}></Tab.Screen>
             {/* <Tab.Screen name="Manage" component={ManagePage} options={{title:"Manage",headerShown:false}}></Tab.Screen> */}
-            <Tab.Screen name="Queue" component={QueuePage} options={{title:"Qเครื่องซักผ้า1"}}></Tab.Screen>
+            
             <Tab.Screen name="Reserve" component={ReservePage} options={{title:"จองคิว",headerShown:false}}></Tab.Screen>
             <Tab.Screen name="Status" component={StatusPage} options={{title:"สถานะ",headerShown:false}}></Tab.Screen>
             <Tab.Screen name="Edit" component={EditPage} options={{title:"edit",headerShown:false}}></Tab.Screen>

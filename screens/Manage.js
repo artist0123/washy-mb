@@ -31,7 +31,7 @@ import {
   arrayRemove 
 } from "firebase/firestore";
 
-function ManagePage({route}) {
+function ManagePage({route, navigation}) {
     const {laundName, laundId} = route.params;
 
     const [layout, setLayout] = useState({width: 0,height: 0})
@@ -95,7 +95,11 @@ function ManagePage({route}) {
     const cards = ({item})=>{
         // Ready State
         if(item.status=="ok"){
-            return <TouchableOpacity style={[styles.card, {width:layout.width}]}>
+            return <TouchableOpacity style={[styles.card, {width:layout.width}]} 
+                onPress={() => {
+                    navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
+                }}
+            >
             <Center flex={2} bg="coolGray.300">
                 <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9"/>
             </Center>
@@ -113,7 +117,11 @@ function ManagePage({route}) {
 
         // InUse State
         }else if(item.status=="queue"){
-            return <TouchableOpacity style={[styles.card, {width:layout.width}]}>
+            return <TouchableOpacity style={[styles.card, {width:layout.width}]}
+                onPress={() => {
+                    navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
+                }}
+            >
                 <Center flex={2} bg="coolGray.300">
                     {/* <Icon as={MaterialCommunityIcons } name="washing-machine" color="black" size="7"/> */}
                     <ActivityIndicator size="large" color="#6fade1" />
@@ -136,7 +144,11 @@ function ManagePage({route}) {
 
         //NotReady State
         }else if(item.status=="notok"){
-            return <TouchableOpacity style={[styles.card, {width:layout.width}]}>
+            return <TouchableOpacity style={[styles.card, {width:layout.width}]}
+                onPress={() => {
+                    navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
+                }}
+            >
                 <Center flex={2} bg="coolGray.300">
                     <Icon as={Octicons} name="x-circle-fill" color="#fa1616" size="9"/>
                 </Center>

@@ -33,12 +33,12 @@ import {
 
 
 
-function QueuePage() {
+function QueuePage({route}) {
     const [layout, setLayout] = useState({width: 0,height: 0})
     const [modalVisible,setModalVisible] = useState(false)
     const [chooseItem, setChooseItem] = useState(null)
-
-    const machineId = "61"
+    const {machineId, laundId} = route.params
+    // const machineId = "61"
     // const [queues, setQueues] = useState([
     //     {id:"1",name:"Huawei1",reserve_date:new Date(), state:"ok"},
     //     {id:"2",name:"Iphone1",reserve_date:new Date("2022-09-15T12:23:51Z"),state:"queue"},
@@ -50,7 +50,7 @@ function QueuePage() {
         // onSnapshot(collection(db, "laundromat"), (snapshot) => {
         //   setWmachines(...snapshot.docs.map((doc) => doc.get("wmachines")));
         // });
-        onSnapshot(doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s"), (snapshot) => {
+        onSnapshot(doc(db, "laundromat",laundId), (snapshot) => {
             const wmachine = snapshot.data().wmachines.filter((item)=>{return item.id == machineId})[0]
             setQueues(wmachine.queue)
             setMachine(wmachine)
@@ -67,7 +67,7 @@ function QueuePage() {
         //         return val
         //     }
         // }))
-        const storeRef = doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s")
+        const storeRef = doc(db, "laundromat",laundId)
         const tempmachines = wmachines.filter(val=>{
             if(val.id != machineId){
                 return val
