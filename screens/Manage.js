@@ -45,11 +45,10 @@ function ManagePage({route, navigation}) {
         //   setWmachines(...snapshot.docs.map((doc) => doc.get("wmachines")));
         // });
         onSnapshot(doc(db, "laundromat", laundId), (snapshot) => {
-            console.log(snapshot.data().wmachines)
+            //console.log(snapshot.data().wmachines)
             setWmachines(snapshot.data().wmachines)
           });
       }, []);
-      console.log(wmachines);
 
     const addMachine =  async()=>{
         // setWmachines([...wmachines, {id:wmachines.length+1,name:"เครื่องซักผ้า"+(wmachines.length+1),capacity:Math.floor(Math.random()*50),state:"ok"}])
@@ -97,7 +96,8 @@ function ManagePage({route, navigation}) {
         if(item.status=="ok"){
             return <TouchableOpacity style={[styles.card, {width:layout.width}]} 
                 onPress={() => {
-                    navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
+                    navigation.navigate("Edit", {machineName:item.name, laundId:laundId, machineId:item.id});
+                    //navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
                 }}
             >
             <Center flex={2} bg="coolGray.300">
@@ -119,7 +119,8 @@ function ManagePage({route, navigation}) {
         }else if(item.status=="queue"){
             return <TouchableOpacity style={[styles.card, {width:layout.width}]}
                 onPress={() => {
-                    navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
+                    navigation.navigate("Edit", {machineName:item.name, laundId:laundId, machineId:item.id});
+                    //navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
                 }}
             >
                 <Center flex={2} bg="coolGray.300">
@@ -146,7 +147,8 @@ function ManagePage({route, navigation}) {
         }else if(item.status=="notok"){
             return <TouchableOpacity style={[styles.card, {width:layout.width}]}
                 onPress={() => {
-                    navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
+                    navigation.navigate("Edit", {machineName:item.name, laundId:laundId, machineId:item.id});
+                    //navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
                 }}
             >
                 <Center flex={2} bg="coolGray.300">
