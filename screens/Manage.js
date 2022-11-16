@@ -60,15 +60,16 @@ function ManagePage({route}) {
         //   addDoc(collection(db,"cities"),{name:"auto gen"})
         const storeRef = doc(db, "laundromat", laundId)
         let ranNum = Math.floor(Math.random()*99999)
+        let date = new Date()
         await updateDoc(storeRef, {
             "wmachines":[...wmachines,{
-                id:ranNum,
+                id:ranNum.toString(),
                 name:"เครื่องซักผ้า#"+ranNum,
                 price:{cold: Math.round(Math.random()*50) ,hot: Math.round(Math.random()*80)},
                 duration: Math.round(Math.random()*120),
                 capacity: Math.round(Math.random()*20),
                 status:["ok","notok","queue"][Math.round(Math.random()*2)],
-                queue:doc(db, "queues","GDH7NPVglW20t0tRfSSZ")
+                queue:[{user_id:"eee",status:"in queue",reserve_time:date,finish_time:new Date(date.getTime()+(1000*60*60*6))}]
             }]
         });
 
