@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import MapView, { PROVIDER_GOOGLE, animateCamera } from "react-native-maps";
-import { View, Text } from "native-base";
+import { MaterialIcons } from '@expo/vector-icons';
+import { View, Center, Stack, Box, Input, Icon } from "native-base";
 import * as Location from "expo-location";
 
 const MapPage = () => {
@@ -29,23 +29,28 @@ const MapPage = () => {
     text = JSON.stringify(location);
   }
 
-  function onUserLocationChange(location) {
-    animateCamera(
-      {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      },
-      { duration: 1500 }
-    );
-  }
   return (
-    <View>
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        showsUserLocation={true}
-        style={{ height: "100%", width: "100%" }}
-      />
-    </View>
+    <Center p={"5"}>
+      <Stack direction="column" space="3" w={"100%"}>
+        <Input
+          placeholder="ค้นหาร้านซักผ้า"
+          width="100%"
+          InputLeftElement={
+            <Icon
+              m="2"
+              ml="3"
+              size="6"
+              color="gray.400"
+              as={<MaterialIcons name="search" />}
+            />
+          }
+        />
+      <Box  bg="primary.400" p="12" rounded="md">
+        Box
+      </Box>
+      
+      </Stack>
+    </Center>
   );
 };
 
