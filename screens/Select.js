@@ -16,6 +16,7 @@ import {
   Image,
   FlatList,
   Icon,
+  Link,
 } from "native-base";
 import {
   AntDesign,
@@ -23,7 +24,13 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
-import { StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  Linking,
+  Platform
+} from "react-native";
 
 function SelectPage({ route, navigation }) {
   const { laundry } = route.params;
@@ -112,6 +119,7 @@ function SelectPage({ route, navigation }) {
         bg="primary.200"
         mx="3%"
         h="60%"
+        p="4"
         display={"flex"}
         flexDirection="column"
       >
@@ -121,6 +129,26 @@ function SelectPage({ route, navigation }) {
         <Text fontSize="md" flex={1}>
           {laundry.distance} เมตร
         </Text>
+        <Link
+          mb={"3"}
+          alignSelf={"flex-end"}
+          onPress={() => {
+            const scheme = Platform.select({
+              ios: "maps:0,0?q=",
+              android: "geo:0,0?q=",
+            });
+            const latLng = `${laundry.latitude},${laundry.longitude}`;
+            const label = laundry.name;
+            const url = Platform.select({
+              ios: `${scheme}${label}@${latLng}`,
+              android: `${scheme}${latLng}(${label})`,
+            });
+            Linking.openURL(url);
+          }}
+        >
+          ดูในแผนที่
+        </Link>
+
         <Box flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
           <FlatList
             data={wmachines}
