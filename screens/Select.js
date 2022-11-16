@@ -29,8 +29,12 @@ function SelectPage() {
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const [wmachines, setWmachines] = useState([]);
   useEffect(() => {
-    onSnapshot(collection(db, "laundromat"), (snapshot) => {
-      setWmachines(...snapshot.docs.map((doc) => doc.get("wmachines")));
+    // onSnapshot(collection(db, "laundromat"), (snapshot) => {
+    //   setWmachines(...snapshot.docs.map((doc) => {console.log(doc.id);return doc.get("wmachines")}));
+    // });
+    onSnapshot(doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s"), (snapshot) => {
+      console.log(snapshot.data().wmachines)
+      setWmachines(snapshot.data().wmachines)
     });
   }, []);
   console.log(wmachines);
