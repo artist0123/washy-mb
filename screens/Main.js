@@ -82,6 +82,7 @@ function MainPage({navigation}) {
             variant={"solid"}
             startIcon={<Icon size="md" as={Entypo} name="location-pin" color="white" />}
             onPress={() => {
+              navigation.navigate("Map");
               console.log("hello");
             }}
           >

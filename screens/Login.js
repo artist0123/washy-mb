@@ -16,11 +16,11 @@ import { FontAwesome } from '@expo/vector-icons';
 function LoginPage() {
   return (
     
-    <><View>
-          <Heading size="xl" bold m={8}>ล็อกอินพนักงาน</Heading>
-    </View>
+    // <><View>
+    //       <Heading size="xl" bold m={8}>ล็อกอินพนักงาน</Heading>
+    // </View>
 
-    <VStack space={10} alignItems="center" flex={1}>
+    <VStack space={10} alignItems="center" flex={1} mt="5">
         <FontAwesome name="user-circle" size={250} color="black" />
 
         <Stack space={4} w="75%" maxW="500px" mx="auto">
@@ -35,7 +35,7 @@ function LoginPage() {
         </Stack>
        
     </VStack>
-    </>
+    // </>
   );
 }
 

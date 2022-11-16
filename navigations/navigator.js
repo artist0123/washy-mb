@@ -1,5 +1,6 @@
 import React from "react";
 import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import MainPage from "../screens/Main";
@@ -14,13 +15,24 @@ import StatusPage from "../screens/Status";
 import LoginPage from "../screens/Login";
 import EditPage from "../screens/Edit";
 
-
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+function MyStack() {
+    return(
+        <Stack.Navigator>
+            <Stack.Screen name="Home" component={MainPage}></Stack.Screen>
+            <Stack.Screen name="Login" component={LoginPage}
+            options={({ route }) => ({
+                title: "ล็อกอินพนักงาน"})}></Stack.Screen>
+        </Stack.Navigator>
+    );
+}
 
 function TabsNavigator(){
     return(
         <Tab.Navigator>
-            <Tab.Screen name="Home" component={MainPage} options={{title:"Washy"}}></Tab.Screen>
+            <Tab.Screen name="Home" component={MyStack} options={{title:"Washy",headerShown:false}}></Tab.Screen>
             <Tab.Screen name="Map" component={MapPage} options={{title:"Map"}}></Tab.Screen>
             <Tab.Screen name="Payment" component={PaymentPage} options={{title:"ชำระค่าบริการ"}}></Tab.Screen>
             <Tab.Screen name="Select" component={SelectPage} options={{title:"ร้าน C",headerShown:false}}></Tab.Screen>
@@ -29,7 +41,7 @@ function TabsNavigator(){
             <Tab.Screen name="Queue" component={QueuePage} options={{title:"Qเครื่องซักผ้า1"}}></Tab.Screen>
             <Tab.Screen name="Reserve" component={ReservePage} options={{title:"จองคิว",headerShown:false}}></Tab.Screen>
             <Tab.Screen name="Status" component={StatusPage} options={{title:"สถานะ",headerShown:false}}></Tab.Screen>
-            <Tab.Screen name="Login" component={LoginPage} options={{title:"ล็อกอิน",headerShown:false}}></Tab.Screen>
+            {/* <Tab.Screen name="Login" component={LoginPage} options={{title:"ล็อกอิน",headerShown:false}}></Tab.Screen> */}
             <Tab.Screen name="Edit" component={EditPage} options={{title:"edit",headerShown:false}}></Tab.Screen>
         </Tab.Navigator>
     );
