@@ -13,7 +13,7 @@ import {
 } from "native-base";
 import { FontAwesome } from '@expo/vector-icons';
 
-function LoginPage() {
+function LoginPage({navigation}) {
   return (
     
     // <><View>
@@ -29,7 +29,10 @@ function LoginPage() {
             <Text fontSize="2xl">Password</Text>
             <Input w="100%" />
 
-            <Button bg="indigo.700" h="100%" style={{alignSelf:'center', height:50, width:200}}>
+            <Button bg="indigo.700" h="100%" style={{alignSelf:'center', height:50, width:200}}
+              onPress={() => {
+                navigation.navigate("ManageLaund");
+              }}>
                 <Text fontSize="xl" color="white">ล็อกอิน</Text>
             </Button>
         </Stack>

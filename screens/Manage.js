@@ -31,8 +31,9 @@ import {
   arrayRemove 
 } from "firebase/firestore";
 
+function ManagePage({route}) {
+    const {laundName, laundId} = route.params;
 
-function ManagePage() {
     const [layout, setLayout] = useState({width: 0,height: 0})
     const [modalVisible,setModalVisible] = useState(false)
     const [chooseItem, setChooseItem] = useState(null)
@@ -43,7 +44,7 @@ function ManagePage() {
         // onSnapshot(collection(db, "laundromat"), (snapshot) => {
         //   setWmachines(...snapshot.docs.map((doc) => doc.get("wmachines")));
         // });
-        onSnapshot(doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s"), (snapshot) => {
+        onSnapshot(doc(db, "laundromat", laundId), (snapshot) => {
             console.log(snapshot.data().wmachines)
             setWmachines(snapshot.data().wmachines)
           });
@@ -57,7 +58,7 @@ function ManagePage() {
         // addDoc(collection(db,"laundromat"),docSnap.data())
          //   setDoc(doc(db, "cities", "LA"),{name:"cwadwadawd"})
         //   addDoc(collection(db,"cities"),{name:"auto gen"})
-        const storeRef = doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s")
+        const storeRef = doc(db, "laundromat", laundId)
         let ranNum = Math.floor(Math.random()*99999)
         await updateDoc(storeRef, {
             "wmachines":[...wmachines,{
@@ -80,7 +81,7 @@ function ManagePage() {
         //     }
         // }))
         setChooseItem(null)
-        const storeRef = doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s")
+        const storeRef = doc(db, "laundromat", laundId)
         await updateDoc(storeRef, {
             "wmachines":wmachines.filter(val=>{
                 if(val.id != id){
@@ -155,9 +156,11 @@ function ManagePage() {
     <Box bg="primary.400" h="full">
         <Box bg="primary.200" mx="3" flex={1} display={"flex"} flexDirection="column">
             <Box px="6" mt="5"  flex={1} display="flex" alignItems="center" flexDirection={"row"} justifyContent={"space-between"}>
-                <Text fontWeight="bold" fontSize="4xl" >ร้าน C </Text>
+                <Text fontWeight="bold" fontSize="4xl" >{laundName}</Text>
                 <Box flexDirection={"row"} justifyContent={"space-between"}> 
+                    {/* ยังไม่ได้ใช้ */}
                     <Button onPress={   ()=>{}} style={{height:"50%"}} mr="3">แก้ไขร้าน</Button>
+                    
                     <Button onPress={()=>{setMode(!mode)}} style={{height:"50%"}}>{mode?"กลับ":"เพิ่ม/ลบ"}</Button>
                 </Box>
                 
