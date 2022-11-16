@@ -13,8 +13,23 @@ import {
   Modal
 } from "native-base";
 import { AntDesign,Octicons,MaterialCommunityIcons ,FontAwesome5 } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { StyleSheet,  TouchableOpacity ,ActivityIndicator } from "react-native";
+import { db, auth } from "../database/firebaseDB";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+  setDoc,
+  addDoc,
+  getDoc,
+  updateDoc,
+  arrayUnion, 
+  arrayRemove 
+} from "firebase/firestore";
 
 
 function ManagePage() {
@@ -22,33 +37,62 @@ function ManagePage() {
     const [modalVisible,setModalVisible] = useState(false)
     const [chooseItem, setChooseItem] = useState(null)
     const [mode, setMode] = useState(false)
-    const [wmachines, setWmachines] = useState([
-        {id:"1",name:"เครื่องซักผ้า1",capacity:10, state:"ok"},
-        {id:"2",name:"เครื่องซักผ้า2",capacity:40,state:"queue"},
-        {id:"3",name:"เครื่องซักผ้า3",capacity:32,state:"notok"},
-        {id:"4",name:"เครื่องซักผ้า4",capacity:32,state:"ok"},
-    ])
-    // var wmachines = [
-    //     {id:"1",name:"เครื่องซักผ้า1",capacity:10, state:"ok"},
-    //     {id:"2",name:"เครื่องซักผ้า2",capacity:40,state:"queue"},
-    //     {id:"3",name:"เครื่องซักผ้า3",capacity:32,state:"notok"},
-    //     {id:"4",name:"เครื่องซักผ้า4",capacity:32,state:"ok"},
-    //     {id:"5",name:"เครื่องซักผ้า4",capacity:32,state:"eeee"}
-    // ]
-    const addMachine = ()=>{
-        setWmachines([...wmachines, {id:wmachines.length+1,name:"เครื่องซักผ้า"+(wmachines.length+1),capacity:Math.floor(Math.random()*50),state:"ok"}])
+    const [wmachines, setWmachines] = useState([])
+
+    useEffect(() => {
+        // onSnapshot(collection(db, "laundromat"), (snapshot) => {
+        //   setWmachines(...snapshot.docs.map((doc) => doc.get("wmachines")));
+        // });
+        onSnapshot(doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s"), (snapshot) => {
+            console.log(snapshot.data().wmachines)
+            setWmachines(snapshot.data().wmachines)
+          });
+      }, []);
+      console.log(wmachines);
+
+    const addMachine =  async()=>{
+        // setWmachines([...wmachines, {id:wmachines.length+1,name:"เครื่องซักผ้า"+(wmachines.length+1),capacity:Math.floor(Math.random()*50),state:"ok"}])
+        
+        // const docSnap = await getDoc(doc(db, "laundromat","aV419sLiUOvORzANTjYa")) 
+        // addDoc(collection(db,"laundromat"),docSnap.data())
+         //   setDoc(doc(db, "cities", "LA"),{name:"cwadwadawd"})
+        //   addDoc(collection(db,"cities"),{name:"auto gen"})
+        const storeRef = doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s")
+        let ranNum = Math.floor(Math.random()*99999)
+        await updateDoc(storeRef, {
+            "wmachines":[...wmachines,{
+                id:ranNum,
+                name:"เครื่องซักผ้า#"+ranNum,
+                price:{cold: Math.round(Math.random()*50) ,hot: Math.round(Math.random()*80)},
+                duration: Math.round(Math.random()*120),
+                capacity: Math.round(Math.random()*20),
+                status:["ok","notok","queue"][Math.round(Math.random()*2)],
+                queue:doc(db, "queues","GDH7NPVglW20t0tRfSSZ")
+            }]
+        });
+
+       
     }
-    const onDelete = (id)=>{
-        setWmachines(wmachines.filter(val=>{
-            if(val.id != id){
-                return val
-            }
-        }))
+    const onDelete = async(id)=>{
+        // setWmachines(wmachines.filter(val=>{
+        //     if(val.id != id){
+        //         return val
+        //     }
+        // }))
         setChooseItem(null)
+        const storeRef = doc(db, "laundromat","CmbyCQ1I1F2hZCBRDW1s")
+        await updateDoc(storeRef, {
+            "wmachines":wmachines.filter(val=>{
+                if(val.id != id){
+                    return val
+                }
+            })
+        });
+        
     }
     const cards = ({item})=>{
         // Ready State
-        if(item.state=="ok"){
+        if(item.status=="ok"){
             return <TouchableOpacity style={[styles.card, {width:layout.width}]}>
             <Center flex={2} bg="coolGray.300">
                 <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9"/>
@@ -66,7 +110,7 @@ function ManagePage() {
             </TouchableOpacity>
 
         // InUse State
-        }else if(item.state=="queue"){
+        }else if(item.status=="queue"){
             return <TouchableOpacity style={[styles.card, {width:layout.width}]}>
                 <Center flex={2} bg="coolGray.300">
                     {/* <Icon as={MaterialCommunityIcons } name="washing-machine" color="black" size="7"/> */}
@@ -89,7 +133,7 @@ function ManagePage() {
             </TouchableOpacity>
 
         //NotReady State
-        }else if(item.state=="notok"){
+        }else if(item.status=="notok"){
             return <TouchableOpacity style={[styles.card, {width:layout.width}]}>
                 <Center flex={2} bg="coolGray.300">
                     <Icon as={Octicons} name="x-circle-fill" color="#fa1616" size="9"/>
@@ -110,9 +154,13 @@ function ManagePage() {
   return (
     <Box bg="primary.400" h="full">
         <Box bg="primary.200" mx="3" flex={1} display={"flex"} flexDirection="column">
-            <Box px="8" mt="5"  flex={1} display="flex" alignItems="center" flexDirection={"row"} justifyContent={"space-between"}>
-                <Text fontWeight="bold" fontSize="4xl">ร้าน C </Text>
-                <Button onPress={()=>{setMode(!mode)}} style={{height:"50%"}}>{mode?"กลับ":"เพิ่ม/ลบ"}</Button>
+            <Box px="6" mt="5"  flex={1} display="flex" alignItems="center" flexDirection={"row"} justifyContent={"space-between"}>
+                <Text fontWeight="bold" fontSize="4xl" >ร้าน C </Text>
+                <Box flexDirection={"row"} justifyContent={"space-between"}> 
+                    <Button onPress={   ()=>{}} style={{height:"50%"}} mr="3">แก้ไขร้าน</Button>
+                    <Button onPress={()=>{setMode(!mode)}} style={{height:"50%"}}>{mode?"กลับ":"เพิ่ม/ลบ"}</Button>
+                </Box>
+                
             </Box>
             <Box  flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
                 <FlatList 

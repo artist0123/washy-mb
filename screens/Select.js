@@ -2,6 +2,7 @@ import React from "react";
 import { db, auth } from "../database/firebaseDB";
 import {
   collection,
+  doc,
   getDocs,
   onSnapshot,
   query,
@@ -27,7 +28,6 @@ import { StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 function SelectPage() {
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const [wmachines, setWmachines] = useState([]);
-
   useEffect(() => {
     onSnapshot(collection(db, "laundromat"), (snapshot) => {
       setWmachines(...snapshot.docs.map((doc) => doc.get("wmachines")));
