@@ -37,9 +37,15 @@ function LoginPage({ navigation }) {
     errorMessage: null,
   });
 
+  const dispatch = useDispatch()
+
   useEffect(() => {
     const handleAuth = onAuthStateChanged(auth, (user) => {
       if (user) {
+        dispatch(userdata({
+          uid: user.uid,
+          email: user.email
+        }))
         setSession({
           isLoggedIn: true,
           currentUser: user,
@@ -90,14 +96,6 @@ function LoginPage({ navigation }) {
     })
   };
 
-  const handleUsername = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handlePassword = (event) => {
-    setPassword(event.target.value);
-  };
-
   const handleLogout = () => {
     signOut(auth).then(() => {
       setSession({
@@ -142,13 +140,12 @@ function LoginPage({ navigation }) {
       return (
         <Stack space={4} w="75%" maxW="500px" mx="auto">
           <Text fontSize="2xl">Username</Text>
-          <Input w="100%" value={username} placeholder="Username" onclick={console.log(username, password)} onChangeText={(txt)=>setUsername(txt)} />
+          <Input w="100%" value={username} placeholder="Username" onChangeText={(txt)=>setUsername(txt)} />
           <Text fontSize="2xl">Password</Text>
           <Input
             value={password}
             w="100%"
             placeholder="Password"
-            onclick={console.log(username, password)}
             onChangeText={(txt) => setPassword(txt)}
             type={show ? "text" : "password"}
             InputRightElement={
