@@ -71,6 +71,7 @@ function TabsNavigator(){
         component={HomeNavigator}
         options={{ title: "Washy", headerShown: false }}
       ></Tab.Screen>
+      
 
       <Tab.Screen
         name="Payment"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { getDistance } from "geolib";
@@ -6,7 +6,7 @@ import { FlatList, Center, Stack, Box, Input, Icon, Text } from "native-base";
 import * as Location from "expo-location";
 import { db } from "../database/firebaseDB";
 
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, getDocs } from "firebase/firestore";
 
 const MapPage = ({ navigation }) => {
   const [location, setLocation] = useState(null);
@@ -14,6 +14,7 @@ const MapPage = ({ navigation }) => {
   const [layout, setLayout] = useState({ width: 0, height: 0 });
 
   const [laundromats, setLaundromats] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const cards = ({ item }) => {
     // Ready State
@@ -46,6 +47,7 @@ const MapPage = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
+      setIsLoading(true);
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
@@ -56,28 +58,41 @@ const MapPage = ({ navigation }) => {
       setLocation(location);
       // console.log(location);
 
-      onSnapshot(collection(db, "laundromat"), (snapshot) => {
-        const dat = snapshot.docs.map((doc) => {
-          let lat = doc.get("location").latitude;
-          let long = doc.get("location").longitude;
-          return {
-            docId: doc.id,
-            name: doc.get("name"),
+      const querySnapshot = await getDocs(collection(db, "laundromat"));
+      const dat = querySnapshot.docs.map((doc) => {
+        let lat = doc.get("location").latitude;
+        let long = doc.get("location").longitude;
+        return {
+          docId: doc.id,
+          name: doc.get("name"),
+          latitude: lat,
+          longitude: long,
+          distance: getDistance(location.coords, {
             latitude: lat,
             longitude: long,
-            distance: getDistance(location.coords, {
-              latitude: lat,
-              longitude: long,
-            }),
-          };
-        });
-
-        setLaundromats(dat.sort((a, b) => a.distance - b.distance));
+          }),
+        };
       });
+      setLaundromats(dat.sort((a, b) => a.distance - b.distance));
+
+      // onSnapshot(collection(db, "laundromat"), (snapshot) => {
+      //   const dat = snapshot.docs.map((doc) => {
+      //     let lat = doc.get("location").latitude;
+      //     let long = doc.get("location").longitude;
+      //     return {
+      //       docId: doc.id,
+      //       name: doc.get("name"),
+      //       latitude: lat,
+      //       longitude: long,
+      // distance: getDistance(location.coords, {
+      //   latitude: lat,
+      //   longitude: long,
+      // }),
+      //     };
+      //   });
     })();
   }, []);
 
-  console.log(laundromats);
   let text = "Waiting..";
   if (errorMsg) {
     text = errorMsg;
@@ -91,6 +106,9 @@ const MapPage = ({ navigation }) => {
         <Input
           placeholder="ค้นหาร้านซักผ้า"
           width="100%"
+          onSubmitEditing={() => {
+            laundromats.filter((e) => {});
+          }}
           InputLeftElement={
             <Icon
               m="2"
