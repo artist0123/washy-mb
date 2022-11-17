@@ -10,7 +10,9 @@ import {
   Icon,
   Button,
   IconButton,
-  Modal
+  Modal,
+  FormControl,
+  Input
 } from "native-base";
 import { AntDesign,Octicons,MaterialCommunityIcons ,FontAwesome5 } from "@expo/vector-icons";
 import { useState , useEffect} from "react";
@@ -28,17 +30,25 @@ import {
   getDoc,
   updateDoc,
   arrayUnion, 
-  arrayRemove 
+  arrayRemove, 
+  GeoPoint
 } from "firebase/firestore";
+import { async } from "@firebase/util";
 
 function ManagePage({route, navigation}) {
     const {laundName, laundId} = route.params;
 
     const [layout, setLayout] = useState({width: 0,height: 0})
     const [modalVisible,setModalVisible] = useState(false)
+    const [updateModalVisible,setUpdateModalVisible] = useState(false)
     const [chooseItem, setChooseItem] = useState(null)
     const [mode, setMode] = useState(false)
     const [wmachines, setWmachines] = useState([])
+
+    const [laundroName, setLaundroName] = useState("None")
+    const [modalLaundName, setModalLaundName] = useState("None")
+    const [modalLatitude, setModalLatitude] = useState(0)
+    const [modalLongitude, setModalLongitude] = useState(0)
 
     useEffect(() => {
         // onSnapshot(collection(db, "laundromat"), (snapshot) => {
@@ -47,12 +57,15 @@ function ManagePage({route, navigation}) {
         onSnapshot(doc(db, "laundromat", laundId), (snapshot) => {
             //console.log(snapshot.data().wmachines)
             setWmachines(snapshot.data().wmachines)
+            setLaundroName(snapshot.data().name)
+            setModalLaundName(snapshot.data().name)
+            setModalLatitude(snapshot.data().location._lat)
+            setModalLongitude(snapshot.data().location._long)
           });
       }, []);
 
     const addMachine =  async()=>{
         // setWmachines([...wmachines, {id:wmachines.length+1,name:"เครื่องซักผ้า"+(wmachines.length+1),capacity:Math.floor(Math.random()*50),state:"ok"}])
-        
         // const docSnap = await getDoc(doc(db, "laundromat","aV419sLiUOvORzANTjYa")) 
         // addDoc(collection(db,"laundromat"),docSnap.data())
          //   setDoc(doc(db, "cities", "LA"),{name:"cwadwadawd"})
@@ -70,9 +83,7 @@ function ManagePage({route, navigation}) {
                 status:["ok","notok","queue"][Math.round(Math.random()*2)],
                 queue:[{user_id:"eee",status:"in queue",reserve_time:date,finish_time:new Date(date.getTime()+(1000*60*60*6))}]
             }]
-        });
-
-       
+        }); 
     }
     const onDelete = async(id)=>{
         // setWmachines(wmachines.filter(val=>{
@@ -88,8 +99,15 @@ function ManagePage({route, navigation}) {
                     return val
                 }
             })
-        });
-        
+        });  
+    }
+
+    const updateLaund = async()=>{
+        const storeRef = doc(db, "laundromat", laundId)
+        await updateDoc(storeRef, {
+            name:modalLaundName,
+            location:new GeoPoint(modalLatitude,modalLongitude)
+        });  
     }
     const cards = ({item})=>{
         // Ready State
@@ -171,10 +189,9 @@ function ManagePage({route, navigation}) {
     <Box bg="primary.400" h="full">
         <Box bg="primary.200" mx="3" flex={1} display={"flex"} flexDirection="column">
             <Box px="6" mt="5"  flex={1} display="flex" alignItems="center" flexDirection={"row"} justifyContent={"space-between"}>
-                <Text fontWeight="bold" fontSize="4xl" >{laundName}</Text>
+                <Text fontWeight="bold" fontSize="4xl" >{laundroName}</Text>
                 <Box flexDirection={"row"} justifyContent={"space-between"}> 
-                    {/* ยังไม่ได้ใช้ */}
-                    <Button onPress={   ()=>{}} style={{height:"50%"}} mr="3">แก้ไขร้าน</Button>
+                    <Button onPress={()=>{setUpdateModalVisible(true)}} style={{height:"50%"}} mr="3">แก้ไขร้าน</Button>
                     
                     <Button onPress={()=>{setMode(!mode)}} style={{height:"50%"}}>{mode?"กลับ":"เพิ่ม/ลบ"}</Button>
                 </Box>
@@ -192,7 +209,7 @@ function ManagePage({route, navigation}) {
         </Box>
 
 
-        {/* Modal */}
+        {/* Delete Modal */}
         <Modal isOpen={modalVisible} onClose={setModalVisible} size={"md"}>
         <Modal.Content maxH="212">
           <Modal.CloseButton />
@@ -206,6 +223,46 @@ function ManagePage({route, navigation}) {
                 </Button>
                 <Button variant="ghost" colorScheme="blueGray" onPress={() => {
                     setModalVisible(false);setChooseItem(null)
+                }}>
+                    ยกเลิก
+                </Button>
+              
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+        </Modal>
+
+        {/* Update Laundromat Modal */}
+        <Modal isOpen={updateModalVisible} onClose={() => setUpdateModalVisible(false)}>
+        <Modal.Content>
+          <Modal.CloseButton />
+          <Modal.Header>แก้ไขร้าน</Modal.Header>
+          <Modal.Body>
+            <FormControl>
+              <FormControl.Label>ชื่อร้าน</FormControl.Label>
+              <Input value={modalLaundName}  onChangeText={(txt)=>setModalLaundName(txt)}/>
+            </FormControl>
+            <Box flexDirection={"row"} mt="3" >
+                <FormControl flex={1} pr="3">
+                <FormControl.Label>ละติจูด</FormControl.Label>
+                <Input value={modalLatitude}  onChangeText={(txt)=>setModalLatitude(txt)}/>
+                </FormControl>
+                <FormControl flex={1} pl="3">
+                <FormControl.Label>ลองจิจูด</FormControl.Label>
+                <Input value={modalLongitude}  onChangeText={(txt)=>setModalLongitude(txt)}/>
+                </FormControl>
+            </Box>
+            
+          </Modal.Body>
+          <Modal.Footer justifyContent={"flex-start"}>
+            <Button.Group space={2}>
+                <Button onPress={() => {
+                    updateLaund();setUpdateModalVisible(false);
+                }} colorScheme={"success"}>
+                    บันทึก
+                </Button>
+                <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+                setUpdateModalVisible(false);
                 }}>
                     ยกเลิก
                 </Button>
