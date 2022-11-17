@@ -121,11 +121,11 @@ function TabsNavigator() {
         component={StatusPage}
         options={{ title: "สถานะ", headerShown: false }}
       ></Tab.Screen>
-      <Tab.Screen
+      {/* <Tab.Screen
         name="ManageLaundTab"
         component={ManageLaunToMachine}
         options={{ title: "man(test)", headerShown: false }}
-      ></Tab.Screen>
+      ></Tab.Screen> */}
     </Tab.Navigator>
   );
 }

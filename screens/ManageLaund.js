@@ -38,25 +38,25 @@ import { async } from "@firebase/util";
 import LoginPage from "../screens/Login";
 
 function ManageLaundPage({ navigation }) {
-  const [session, setSession] = useState({
-    isLoggedIn: false,
-    currentUser: null,
-    errorMessage: null,
-  });
+  // const [session, setSession] = useState({
+  //   isLoggedIn: false,
+  //   currentUser: null,
+  //   errorMessage: null,
+  // });
 
-  useEffect(() =>{
-    const handleAuth = onAuthStateChanged(auth, (user) =>{
-      if(user){
-        setSession({
-          isLoggedIn: true,
-          currentUser: user,
-          errorMessage: null,
-        })
-      }
-    });
+  // useEffect(() =>{
+  //   const handleAuth = onAuthStateChanged(auth, (user) =>{
+  //     if(user){
+  //       setSession({
+  //         isLoggedIn: true,
+  //         currentUser: user,
+  //         errorMessage: null,
+  //       })
+  //     }
+  //   });
 
-    return handleAuth()
-  }, [])
+  //   return handleAuth()
+  // }, [])
 
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const [modalVisible, setModalVisible] = useState(false);
@@ -190,10 +190,8 @@ function ManageLaundPage({ navigation }) {
     );
   };
 
-  function render() {
-    if (session.isLoggedIn) {
-      return (
-      <Box bg="primary.400" h="full">
+  return (
+    <Box bg="primary.400" h="full">
         <Box
           bg="primary.200"
           mx="3"
@@ -347,15 +345,7 @@ function ManageLaundPage({ navigation }) {
             </Modal.Footer>
           </Modal.Content>
         </Modal>
-      </Box>);
-    } else {
-      return <LoginPage setSession={setSession}/>;
-    }
-  }
-  return (
-    <>
-      {render()}
-    </>
+      </Box>
   );
 }
 

@@ -15,14 +15,33 @@ import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from "@expo/vector-icons";
 import {auth} from "../database/firebaseDB";
 import {signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth"
-import { async } from "@firebase/util";
 
-function LoginPage({setSession, navigation}) {
+function LoginPage({navigation}) {
   const [login, setLogin] = useState(false);
   const [show, setShow] = useState(false);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const [session, setSession] = useState({
+    isLoggedIn: false,
+    currentUser: null,
+    errorMessage: null,
+  });
+
+  useEffect(() =>{
+    const handleAuth = onAuthStateChanged(auth, (user) =>{
+      if(user){
+        setSession({
+          isLoggedIn: true,
+          currentUser: user,
+          errorMessage: null,
+        })
+      }
+    });
+
+    return handleAuth()
+  }, [])
   
   const handleLogin = async() => {
     try {
@@ -34,6 +53,8 @@ function LoginPage({setSession, navigation}) {
         currentUser: user
       })
       console.log("good")
+      navigation.navigate("ManageLaund");
+
     } catch (error) {
       setSession({
         isLoggedIn: false,
@@ -53,8 +74,8 @@ function LoginPage({setSession, navigation}) {
     setPassword(event.target.value);
   }
 
-  const handleLogout = async() =>{
-    signOut(auth).then(response => {
+  const handleLogout = () =>{
+    signOut(auth).then(() => {
       setSession({
         isLoggedIn: false,
         currentUser: null
@@ -65,9 +86,9 @@ function LoginPage({setSession, navigation}) {
   useEffect(() =>{
     const handleAuth = onAuthStateChanged(auth, (user) =>{
       if(user){
-        setLogin(true)
+        setSession(true)
       } else {
-        setLogin(false)
+        setSession(false)
       }
     });
 
@@ -75,7 +96,7 @@ function LoginPage({setSession, navigation}) {
   }, [])
 
   function render(){
-    if (login) {
+    if (session.isLoggedIn) {
       return(
       <Stack space={4} w="75%" maxW="500px" mx="auto">
             <Button bg="indigo.700" h="100%" style={{alignSelf:'center', height:50, width:200}}
@@ -112,7 +133,6 @@ function LoginPage({setSession, navigation}) {
   return (
     <VStack space={10} alignItems="center" flex={1} mt="5">
         <FontAwesome name="user-circle" size={250} color="black" mt="5"/>
-        
         {render()}
     </VStack>
   );
