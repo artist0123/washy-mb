@@ -35,6 +35,7 @@ import {
 } from "firebase/firestore";
 import { async } from "@firebase/util";
 
+
 function ManagePage({route, navigation}) {
     const {laundName, laundId} = route.params;
 
@@ -45,17 +46,44 @@ function ManagePage({route, navigation}) {
     const [mode, setMode] = useState(false)
     const [wmachines, setWmachines] = useState([])
 
+
     const [laundroName, setLaundroName] = useState("None")
     const [modalLaundName, setModalLaundName] = useState("None")
-    const [modalLatitude, setModalLatitude] = useState(0)
-    const [modalLongitude, setModalLongitude] = useState(0)
+    const [modalLatitude, setModalLatitude] = useState("0")
+    const [modalLongitude, setModalLongitude] = useState("0")
+  
+    const [errors, setErrors] = useState({});
+    const validate = () => {
+      const lat = parseFloat(modalLatitude)
+      const long = parseFloat(modalLongitude)
+  
+      let nameerror = null
+      let laterror = null
+      let longerror = null
+      if(isNaN(lat)){
+        laterror = "Latitude must be a number" 
+      }else if(lat < -90 || lat > 90){
+        laterror = "Latitude must be a number between -90 and 90"
+      }
+  
+      if(isNaN(long)){
+        longerror = "Longitude must be a number"
+      }else if(long < -180 || long > 180){
+        longerror = "Longitude must be a number between -180 and 180"
+      }
+      if (modalLaundName === undefined || modalLaundName == "") {
+        nameerror = 'Name is required'
+      }
+      setErrors({name:nameerror,latitude:laterror,longitude:longerror})
+      if(nameerror != null || laterror != null || longerror != null){return false}
+      return true;
+    };
 
     useEffect(() => {
         // onSnapshot(collection(db, "laundromat"), (snapshot) => {
         //   setWmachines(...snapshot.docs.map((doc) => doc.get("wmachines")));
         // });
         onSnapshot(doc(db, "laundromat", laundId), (snapshot) => {
-            //console.log(snapshot.data().wmachines)
             setWmachines(snapshot.data().wmachines)
             setLaundroName(snapshot.data().name)
             setModalLaundName(snapshot.data().name)
@@ -86,11 +114,6 @@ function ManagePage({route, navigation}) {
         }); 
     }
     const onDelete = async(id)=>{
-        // setWmachines(wmachines.filter(val=>{
-        //     if(val.id != id){
-        //         return val
-        //     }
-        // }))
         setChooseItem(null)
         const storeRef = doc(db, "laundromat", laundId)
         await updateDoc(storeRef, {
@@ -103,11 +126,18 @@ function ManagePage({route, navigation}) {
     }
 
     const updateLaund = async()=>{
-        const storeRef = doc(db, "laundromat", laundId)
-        await updateDoc(storeRef, {
-            name:modalLaundName,
-            location:new GeoPoint(modalLatitude,modalLongitude)
-        });  
+        if(validate()){
+            setUpdateModalVisible(false);
+            setErrors({})
+            const storeRef = doc(db, "laundromat", laundId)
+            await updateDoc(storeRef, {
+                name:modalLaundName,
+                location:new GeoPoint(modalLatitude,modalLongitude)
+            });  
+
+           
+        }
+        
     }
     const cards = ({item})=>{
         // Ready State
@@ -142,7 +172,6 @@ function ManagePage({route, navigation}) {
                 }}
             >
                 <Center flex={2} bg="coolGray.300">
-                    {/* <Icon as={MaterialCommunityIcons } name="washing-machine" color="black" size="7"/> */}
                     <ActivityIndicator size="large" color="#6fade1" />
                 </Center>
                 <Box flex={5} p="3">
@@ -241,15 +270,18 @@ function ManagePage({route, navigation}) {
             <FormControl>
               <FormControl.Label>ชื่อร้าน</FormControl.Label>
               <Input value={modalLaundName}  onChangeText={(txt)=>setModalLaundName(txt)}/>
+              {errors.name!=null ? <Text color={"danger.700"}>{errors.name}</Text> : null}
             </FormControl>
             <Box flexDirection={"row"} mt="3" >
                 <FormControl flex={1} pr="3">
-                <FormControl.Label>ละติจูด</FormControl.Label>
-                <Input value={modalLatitude}  onChangeText={(txt)=>setModalLatitude(txt)}/>
+                    <FormControl.Label>ละติจูด</FormControl.Label>
+                    <Input value={modalLatitude}  onChangeText={(txt)=>setModalLatitude(txt)}/>
+                    {errors.latitude!=null ? <Text color={"danger.700"}>{errors.latitude}</Text> : null}
                 </FormControl>
                 <FormControl flex={1} pl="3">
-                <FormControl.Label>ลองจิจูด</FormControl.Label>
-                <Input value={modalLongitude}  onChangeText={(txt)=>setModalLongitude(txt)}/>
+                    <FormControl.Label>ลองจิจูด</FormControl.Label>
+                    <Input value={modalLongitude}  onChangeText={(txt)=>setModalLongitude(txt)}/>
+                    {errors.longitude!=null ? <Text color={"danger.700"}>{errors.longitude}</Text> : null}
                 </FormControl>
             </Box>
             
@@ -257,7 +289,7 @@ function ManagePage({route, navigation}) {
           <Modal.Footer justifyContent={"flex-start"}>
             <Button.Group space={2}>
                 <Button onPress={() => {
-                    updateLaund();setUpdateModalVisible(false);
+                    updateLaund();
                 }} colorScheme={"success"}>
                     บันทึก
                 </Button>
