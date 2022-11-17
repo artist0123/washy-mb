@@ -52,7 +52,7 @@ function QueuePage({route}) {
         // });
         onSnapshot(doc(db, "laundromat",laundId), (snapshot) => {
             const wmachine = snapshot.data().wmachines.filter((item)=>{return item.id == machineId})[0]
-            setQueues(wmachine.queue)
+            setQueues(wmachine?wmachine.queue:null)
             setMachine(wmachine)
             setWmachines(snapshot.data().wmachines)
           });
