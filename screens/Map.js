@@ -6,7 +6,7 @@ import { FlatList, Center, Stack, Box, Input, Icon, Text } from "native-base";
 import * as Location from "expo-location";
 import { db } from "../database/firebaseDB";
 
-import { collection, onSnapshot, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 const MapPage = ({ navigation }) => {
   const [location, setLocation] = useState(null);
@@ -75,21 +75,6 @@ const MapPage = ({ navigation }) => {
       });
       setLaundromats(dat.sort((a, b) => a.distance - b.distance));
 
-      // onSnapshot(collection(db, "laundromat"), (snapshot) => {
-      //   const dat = snapshot.docs.map((doc) => {
-      //     let lat = doc.get("location").latitude;
-      //     let long = doc.get("location").longitude;
-      //     return {
-      //       docId: doc.id,
-      //       name: doc.get("name"),
-      //       latitude: lat,
-      //       longitude: long,
-      // distance: getDistance(location.coords, {
-      //   latitude: lat,
-      //   longitude: long,
-      // }),
-      //     };
-      //   });
     })();
   }, []);
 
@@ -98,6 +83,9 @@ const MapPage = ({ navigation }) => {
     text = errorMsg;
   } else if (location) {
     text = JSON.stringify(location);
+    if(laundromats){
+      setIsLoading(false);
+    }
   }
 
   return (
