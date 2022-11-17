@@ -48,6 +48,7 @@ function LoginPage({navigation}) {
       const response = await signInWithEmailAndPassword(auth, username, password)
       const {user} = response
       
+      console.log(username, password)
       setSession({
         isLoggedIn: true,
         currentUser: user
@@ -61,7 +62,7 @@ function LoginPage({navigation}) {
         currentUser: null,
         errorMessage: null
       })
-      console.log("bad")
+      console.log(error)
     }
     
   }
