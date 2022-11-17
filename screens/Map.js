@@ -119,14 +119,13 @@ const MapPage = ({ navigation }) => {
             />
           }
         />
-        <Box flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
-          <FlatList
-            data={laundromats}
-            renderItem={cards}
-            keyExtractor={(item) => item.name}
-            contentContainerStyle={{ alignItems: "flex-start" }}
-          ></FlatList>
-        </Box>
+        <FlatList
+          onLayout={(event) => setLayout(event.nativeEvent.layout)}
+          data={laundromats}
+          renderItem={cards}
+          keyExtractor={(item) => item.name}
+          contentContainerStyle={{ alignItems: "flex-start" }}
+        ></FlatList>
       </Stack>
     </Center>
   );
