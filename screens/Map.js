@@ -7,6 +7,7 @@ import * as Location from "expo-location";
 import { db } from "../database/firebaseDB";
 
 import { collection, getDocs } from "firebase/firestore";
+import { isEmpty } from "@firebase/util";
 
 const MapPage = ({ navigation }) => {
   const [location, setLocation] = useState(null);
@@ -14,7 +15,7 @@ const MapPage = ({ navigation }) => {
   const [layout, setLayout] = useState({ width: 0, height: 0 });
 
   const [laundromats, setLaundromats] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState([]);
 
   const cards = ({ item }) => {
     // Ready State
@@ -47,7 +48,7 @@ const MapPage = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      setIsLoading(true);
+      // setIsLoading(true);
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
@@ -73,8 +74,8 @@ const MapPage = ({ navigation }) => {
           }),
         };
       });
-      setLaundromats(dat.sort((a, b) => a.distance - b.distance));
-
+      setLaundromats(dat);
+      setData(dat.sort((a, b) => a.distance - b.distance));
     })();
   }, []);
 
@@ -83,10 +84,18 @@ const MapPage = ({ navigation }) => {
     text = errorMsg;
   } else if (location) {
     text = JSON.stringify(location);
-    if(laundromats){
-      setIsLoading(false);
-    }
   }
+
+  const handleSearch = (text) => {
+    if (isEmpty(text)) {
+      setData(laundromats);
+      return;
+    }
+    const data = laundromats.filter((e) => {
+      return e.name.toLowerCase().includes(text.toLowerCase());
+    });
+    setData(data);
+  };
 
   return (
     <Center p={"5"}>
@@ -94,9 +103,7 @@ const MapPage = ({ navigation }) => {
         <Input
           placeholder="ค้นหาร้านซักผ้า"
           width="100%"
-          onSubmitEditing={() => {
-            laundromats.filter((e) => {});
-          }}
+          onChangeText={handleSearch}
           InputLeftElement={
             <Icon
               m="2"
@@ -109,7 +116,7 @@ const MapPage = ({ navigation }) => {
         />
         <FlatList
           onLayout={(event) => setLayout(event.nativeEvent.layout)}
-          data={laundromats}
+          data={data}
           renderItem={cards}
           keyExtractor={(item) => item.name}
           contentContainerStyle={{ alignItems: "flex-start" }}
