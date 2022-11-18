@@ -66,7 +66,7 @@ function ReservePage({route, navigation}) {
             status:machine.status,
             queue:[...queues,{
                 user_id:"asdafc",
-                queue_id:ranNum.toString(),
+                id:ranNum.toString(),
                 reserve_time:new Date(),
                 finish_time:null,
                 status:"in queue"

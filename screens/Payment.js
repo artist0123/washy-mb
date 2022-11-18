@@ -65,7 +65,11 @@ function PaymentPage({route,navigation}) {
             }
         })
         let ranNum = Math.floor(Math.random()*99999)
-        setShowModal(true)
+        
+        let curDate = new Date()
+        console.log(machine.duration)
+        console.log(curDate)
+        console.log(new Date(curDate.getTime()+(machine.duration*60*1000)))
         updateDoc(storeRef, {
             "wmachines":[...tempmachines,{
                 id:machine.id, 
@@ -76,22 +80,21 @@ function PaymentPage({route,navigation}) {
                 status:machine.status,
                 queue:[...queues,{
                     user_id:"asdafc",
-                    queue_id:ranNum.toString(),
-                    reserve_time:new Date(),
-                    finish_time:null,
+                    id:ranNum.toString(),
+                    reserve_time:curDate,
+                    finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
                     status:"washing"
                 }]
             }]
         });
         addDoc(collection(db, "payment"), {
             user_id:"asdafc",
-            queue_id:ranNum.toString(),
-            pay_time:new Date(),
+            id:ranNum.toString(),
+            pay_time:curDate,
             pay_price:isCool?machine.price.cold:machine.price.hot,
             pay_method:method
         });
-        
-        
+        setShowModal(true)
    
     }
     return (
@@ -139,7 +142,7 @@ function PaymentPage({route,navigation}) {
 
 
           {/* Pay success modal */}
-          <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
+          <Modal isOpen={showModal} onClose={() => {setShowModal(false);navigation.popToTop()}} size="lg">
                 <Modal.Content maxWidth="350">
                 <Modal.Body alignItems={"center"}>
                     <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9"/>

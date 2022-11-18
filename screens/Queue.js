@@ -38,11 +38,7 @@ function QueuePage({route}) {
     const [modalVisible,setModalVisible] = useState(false)
     const [chooseItem, setChooseItem] = useState(null)
     const {machineId, laundId} = route.params
-    // const machineId = "61"
-    // const [queues, setQueues] = useState([
-    //     {id:"1",name:"Huawei1",reserve_date:new Date(), state:"ok"},
-    //     {id:"2",name:"Iphone1",reserve_date:new Date("2022-09-15T12:23:51Z"),state:"queue"},
-    // ])
+
     const [queues, setQueues] = useState([])
     const [machine, setMachine] = useState(null)
     const [wmachines, setWmachines] = useState([])
@@ -62,23 +58,19 @@ function QueuePage({route}) {
         return date.getHours().toString().padStart(2,"0")+":"+date.getMinutes().toString().padStart(2,"0")
     }
     const onDelete = async (id)=>{
-        // setQueues(queues.filter(val=>{
-        //     if(val.id != id){
-        //         return val
-        //     }
-        // }))
+
         const storeRef = doc(db, "laundromat",laundId)
         const tempmachines = wmachines.filter(val=>{
             if(val.id != machineId){
                 return val
             }
         })
-        const tempqueues = machine.queue.filter(val=>{
-                if(val.user_id != id){
+        const tempqueues = queues.filter(val=>{
+                if(val.id != id){
                     return val
                 }
         })
-        
+
         await updateDoc(storeRef, {
             "wmachines":[...tempmachines,{
                 id:machine.id, 
@@ -155,7 +147,7 @@ function QueuePage({route}) {
           <Modal.Footer justifyContent={"flex-start"}>
             <Button.Group space={2}>
                 <Button colorScheme={"red"} onPress={() => {
-                  setModalVisible(false);onDelete(chooseItem.user_id)
+                  setModalVisible(false);onDelete(chooseItem.id)
                 }}>
                     {"นำ "+(!chooseItem?"None":chooseItem.user_id)+" ออก"}
                 </Button>
