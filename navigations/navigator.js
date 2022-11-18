@@ -15,6 +15,7 @@ import StatusPage from "../screens/Status";
 import LoginPage from "../screens/Login";
 import EditPage from "../screens/Edit";
 import ManageLaundPage from "../screens/ManageLaund";
+import GeneratorPage from "../screens/QRGenerator";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -60,6 +61,22 @@ function HomeNavigator() {
         component={QueuePage}
         options={({ route }) => ({ title: route.params.machineName })}
       ></Stack.Screen>
+      <Stack.Screen
+        name="Reserve"
+        component={ReservePage}
+        options={{ title: "จองคิว", headerShown: false }}
+      ></Stack.Screen>
+      <Tab.Screen
+        name="Payment"
+        component={PaymentPage}
+        options={{ title: "ชำระค่าบริการ" }}
+      ></Tab.Screen>
+
+      <Tab.Screen
+        name="QRcode"
+        component={QRcodePage}
+        options={{ title: "แสกน QR Code", headerShown: false }}
+      ></Tab.Screen>
     </Stack.Navigator>
   );
 }
@@ -85,6 +102,7 @@ function ManageLaunToMachine() {
         component={QueuePage}
         options={({ route }) => ({ title: route.params.machineName })}
       ></Stack.Screen>
+      
     </Stack.Navigator>
   );
 }
@@ -98,29 +116,15 @@ function TabsNavigator() {
         options={{ title: "Washy", headerShown: false }}
       ></Tab.Screen>
 
-      <Tab.Screen
-        name="Payment"
-        component={PaymentPage}
-        options={{ title: "ชำระค่าบริการ" }}
-      ></Tab.Screen>
-
-      <Tab.Screen
-        name="QRcode"
-        component={QRcodePage}
-        options={{ title: "แสกน QR Code", headerShown: false }}
-      ></Tab.Screen>
+      
       {/* <Tab.Screen name="Manage" component={ManagePage} options={{title:"Manage",headerShown:false}}></Tab.Screen> */}
 
-      <Tab.Screen
-        name="Reserve"
-        component={ReservePage}
-        options={{ title: "จองคิว", headerShown: false }}
-      ></Tab.Screen>
       <Tab.Screen
         name="Status"
         component={StatusPage}
         options={{ title: "สถานะ", headerShown: false }}
       ></Tab.Screen>
+      <Tab.Screen name="Generator" component={GeneratorPage}></Tab.Screen>
       {/* <Tab.Screen
         name="ManageLaundTab"
         component={ManageLaunToMachine}

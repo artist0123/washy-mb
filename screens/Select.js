@@ -42,7 +42,7 @@ function SelectPage({ route, navigation }) {
     //   setWmachines(...snapshot.docs.map((doc) => {console.log(doc.id);return doc.get("wmachines")}));
     // });
     onSnapshot(doc(db, "laundromat", laundry.docId), (snapshot) => {
-      console.log(snapshot.data().wmachines);
+      if(!snapshot.data()){return}
       setWmachines(snapshot.data().wmachines);
     });
   }, []);
@@ -51,7 +51,9 @@ function SelectPage({ route, navigation }) {
     // Ready State
     if (item.status == "ok") {
       return (
-        <TouchableOpacity style={[styles.card, { width: layout.width }]}>
+        <TouchableOpacity style={[styles.card, { width: layout.width }]}
+        onPress={()=>{navigation.navigate("Reserve", {laundId:laundry.docId, machineId:item.id});}}
+        >
           <Center flex={2} bg="coolGray.300">
             <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9" />
           </Center>
@@ -69,7 +71,9 @@ function SelectPage({ route, navigation }) {
       // InUse State
     } else if (item.status == "queue") {
       return (
-        <TouchableOpacity style={[styles.card, { width: layout.width }]}>
+        <TouchableOpacity style={[styles.card, { width: layout.width }]}
+        onPress={()=>{navigation.navigate("Reserve", {laundId:laundry.docId, machineId:item.id});}}
+        >
           <Center flex={2} bg="coolGray.300">
             {/* <Icon as={MaterialCommunityIcons } name="washing-machine" color="black" size="7"/> */}
             <ActivityIndicator size="large" color="#6fade1" />
@@ -88,7 +92,7 @@ function SelectPage({ route, navigation }) {
       //NotReady State
     } else if (item.status == "notok") {
       return (
-        <TouchableOpacity style={[styles.card, { width: layout.width }]}>
+        <Box style={[styles.card, { width: layout.width }]}>
           <Center flex={2} bg="coolGray.300">
             <Icon as={Octicons} name="x-circle-fill" color="#fa1616" size="9" />
           </Center>
@@ -100,7 +104,7 @@ function SelectPage({ route, navigation }) {
               งดให้บริการชั่วคราว
             </Text>
           </Box>
-        </TouchableOpacity>
+        </Box>
       );
     }
   };

@@ -93,7 +93,7 @@ function QueuePage({route}) {
     }
     const cards = ({item})=>{
         // Ready State
-        if(item.status=="ok"){
+        if(item.status=="washing"){
             return <Box style={[styles.card, {width:layout.width}]}>
             <Center flex={2} bg="coolGray.300">
                 <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9"/>
@@ -139,7 +139,7 @@ function QueuePage({route}) {
                 <FlatList 
                     data={queues} 
                     renderItem={cards} 
-                    keyExtractor={item=>item.user_id} 
+                    keyExtractor={item=>item.id} 
                     contentContainerStyle={{alignItems:"flex-start"}}
                 ></FlatList>
             </Box>

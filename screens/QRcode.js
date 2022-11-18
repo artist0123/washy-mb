@@ -13,7 +13,8 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
 
-function QRcodePage({navigation}) {
+function QRcodePage({navigation, route}) {
+  const {machineId, laundId,laundName} = route.params
   const [scanned, setScanned] = useState(false);
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -39,12 +40,16 @@ function QRcodePage({navigation}) {
 
   const handleBarCodeScanned = ({type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     try{
-      console.log(type,data)
       let _data = JSON.parse(data)
       console.log(_data.machineId, _data.laundId)
-      navigation.navigate("Queue",{machineId:_data.machineId,laundId:_data.laundId})
+      console.log("send ",machineId,laundId)
+      if(machineId == _data.machineId && laundId == _data.laundId){
+        navigation.navigate("Payment",{machineId:_data.machineId,laundId:_data.laundId})
+      }else{
+        alert(`machine not matched(select:${laundId}#${machineId}, scan:${_data.laundId}#${_data.machineId})`)
+      }
+
     }catch(error){
       console.log("Unable to parse: ",error)
     }
