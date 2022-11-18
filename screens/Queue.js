@@ -47,8 +47,9 @@ function QueuePage({route}) {
         //   setWmachines(...snapshot.docs.map((doc) => doc.get("wmachines")));
         // });
         onSnapshot(doc(db, "laundromat",laundId), (snapshot) => {
+            if(!snapshot.data()){return}
             const wmachine = snapshot.data().wmachines.filter((item)=>{return item.id == machineId})[0]
-            setQueues(wmachine?wmachine.queue:null)
+            setQueues(wmachine.queue)
             setMachine(wmachine)
             setWmachines(snapshot.data().wmachines)
           });
@@ -70,17 +71,23 @@ function QueuePage({route}) {
                     return val
                 }
         })
-
+        const temp2machines = [...tempmachines,{
+            id:machine.id, 
+            capacity:machine.capacity,
+            duration:machine.duration, 
+            price:{cold:machine.price.cold,hot:machine.price.hot},
+            name:machine.name,
+            status:tempqueues.length>0?"queue":"ok",
+            queue:tempqueues
+        }]
+        temp2machines.sort((a,b)=>{
+            let sweight = {"ok":0,"notok":2,"queue":1}
+            let minus = sweight[a.status] - sweight[b.status]  
+            let minus2 = b.capacity - a.capacity
+            return isNaN(minus)?0:minus==0?minus2:minus
+          })
         await updateDoc(storeRef, {
-            "wmachines":[...tempmachines,{
-                id:machine.id, 
-                capacity:machine.capacity,
-                duration:machine.duration, 
-                price:{cold:machine.price.cold,hot:machine.price.hot},
-                name:machine.name,
-                status:machine.status,
-                queue:tempqueues
-            }]
+            "wmachines":temp2machines
         });
     }
     const cards = ({item})=>{

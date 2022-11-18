@@ -102,16 +102,23 @@ function ManagePage({route, navigation}) {
         const storeRef = doc(db, "laundromat", laundId)
         let ranNum = Math.floor(Math.random()*99999)
         let date = new Date()
+        const tempmachines = [...wmachines,{
+            id:ranNum.toString(),
+            name:"เครื่องซักผ้า#"+ranNum,
+            price:{cold: Math.round(Math.random()*50) ,hot: Math.round(Math.random()*80)},
+            duration: Math.round(Math.random()*120),
+            capacity: Math.round(Math.random()*20),
+            status:["ok","notok"][Math.round(Math.random())],
+            queue:[]
+        }]
+        tempmachines.sort((a,b)=>{
+            let sweight = {"ok":0,"notok":2,"queue":1}
+            let minus = sweight[a.status] - sweight[b.status]  
+            let minus2 = b.capacity - a.capacity
+            return isNaN(minus)?0:minus==0?minus2:minus
+        })
         await updateDoc(storeRef, {
-            "wmachines":[...wmachines,{
-                id:ranNum.toString(),
-                name:"เครื่องซักผ้า#"+ranNum,
-                price:{cold: Math.round(Math.random()*50) ,hot: Math.round(Math.random()*80)},
-                duration: Math.round(Math.random()*120),
-                capacity: Math.round(Math.random()*20),
-                status:["ok","notok","queue"][Math.round(Math.random()*2)],
-                queue:[{user_id:"eee",status:"in queue",reserve_time:date,finish_time:new Date(date.getTime()+(1000*60*60*6))}]
-            }]
+            "wmachines":tempmachines
         }); 
     }
     const onDelete = async(id)=>{

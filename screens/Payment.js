@@ -65,27 +65,36 @@ function PaymentPage({route,navigation}) {
             }
         })
         let ranNum = Math.floor(Math.random()*99999)
-        
         let curDate = new Date()
-        console.log(machine.duration)
-        console.log(curDate)
-        console.log(new Date(curDate.getTime()+(machine.duration*60*1000)))
+        const tempqueues = [...queues,{
+            user_id:"asdafc",
+            id:ranNum.toString(),
+            reserve_time:curDate,
+            finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
+            status:"washing"
+        }]
+        tempqueues.sort((a,b)=>{
+            let sweight = {"washing":0,"in queue":1,"cancel":2,"paid":3}
+            let minus = sweight[a.status] - sweight[b.status]  
+            return isNaN(minus)?0:minus
+        })
+        const temp2machines = [...tempmachines,{
+            id:machine.id, 
+            capacity:machine.capacity,
+            duration:machine.duration, 
+            price:{cold:machine.price.cold,hot:machine.price.hot},
+            name:machine.name,
+            status:tempqueues.length>0?"queue":"ok",
+            queue:tempqueues
+        }]
+        temp2machines.sort((a,b)=>{
+            let sweight = {"ok":0,"notok":2,"queue":1}
+            let minus = sweight[a.status] - sweight[b.status]  
+            let minus2 = b.capacity - a.capacity
+            return isNaN(minus)?0:minus==0?minus2:minus
+        })
         updateDoc(storeRef, {
-            "wmachines":[...tempmachines,{
-                id:machine.id, 
-                capacity:machine.capacity,
-                duration:machine.duration, 
-                price:{cold:machine.price.cold,hot:machine.price.hot},
-                name:machine.name,
-                status:machine.status,
-                queue:[...queues,{
-                    user_id:"asdafc",
-                    id:ranNum.toString(),
-                    reserve_time:curDate,
-                    finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
-                    status:"washing"
-                }]
-            }]
+            "wmachines":temp2machines
         });
         addDoc(collection(db, "payment"), {
             user_id:"asdafc",
