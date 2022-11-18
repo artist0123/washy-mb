@@ -85,6 +85,7 @@ function ManagePage({route, navigation}) {
         // });
         onSnapshot(doc(db, "laundromat", laundId), (snapshot) => {
             if(!snapshot.data()){return}
+            console.log(wmachines)
             setWmachines(snapshot.data().wmachines)
             setLaundroName(snapshot.data().name)
             setModalLaundName(snapshot.data().name)

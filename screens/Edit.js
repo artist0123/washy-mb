@@ -6,6 +6,7 @@ import {
     doc,
     getDocs,
     onSnapshot,
+    updateDoc,
     query,
     where,
   } from "firebase/firestore";
@@ -24,13 +25,11 @@ import {
 } from "native-base";
 
 function EditPage({route, navigation}) {
-
-    const [value, setValue] = React.useState("");
-    const handleChange = text => setValue(text);
-    
     const {machineName, laundId, machineId} = route.params;
-    const [service, setService] = React.useState("");
     const [wmachines, setWmachines] = useState([])
+
+    const [wmarr, setwmarr] = useState()
+
     const [wm_name, setWm_name] = useState("");
     const [wm_capacity, setWm_capacity] = useState("");
     const [wm_hot, setWm_hot] = useState("");
@@ -38,44 +37,49 @@ function EditPage({route, navigation}) {
     const [wm_duration, setWm_duration] = useState("");
     const [wm_status, setWm_status] = useState("");
 
-    const [initWm, setInitWm] = useState({
-        capacity: "",
-        duration: "",
-        price: "",
-        name: "",
-        price: {cold: 0, hot: 0},
-        status: ""
-    })
+    const [initWm, setInitWm] = useState()
+    const [machine, setMachine] = useState(null)
+    const [flatData, setFlatData] = useState([])
+    
 
     useEffect(() => {
         onSnapshot(doc(db, "laundromat", laundId), (snapshot) => {
-            console.log(snapshot.data().wmachines.filter( val => {
-                if(val.id == machineId){
-                    setInitWm({
-                        capacity: val.capacity,
-                        duration: val.duration,
-                        price: val.price,
-                        name: val.name,
-                        price: {cold: val.price.cold, hot: val.price.hot},
-                        status: val.status
-                    })
+
+            //setwmarr(snapshot.data().wmachines);
+            const wmachine = snapshot.data().wmachines.filter(item=>{
+                if(item.id == machineId){
+                    setWm_name(item.name)
+                    setWm_capacity(item.capacity)
+                    setWm_hot(item.price.hot)
+                    setWm_cold(item.price.cold)
+                    setWm_duration(item.duration)
+                    setWm_status(item.status)
                 }
-            }))
-            setWmachines(snapshot.data().wmachines.filter( val => {
-                if(val.id == machineId){
-                    setWm_name(val.name)
-                    setWm_capacity(val.capacity)
-                    setWm_hot(val.price.hot)
-                    setWm_cold(val.price.cold)
-                    setWm_duration(val.duration)
-                    setWm_status(val.status)
-                    return val;
-                }
-            }))
+                return item.id == machineId})[0]
+
+            setMachine(wmachine)
+            setInitWm(wmachine)
+            setWmachines(snapshot.data().wmachines)
+
+            setFlatData([wmachine])
+            
+            // setWmachines(snapshot.data().wmachines.filter( val => {
+            //     if(val.id == machineId){
+            //         setInitWm(val)
+                    
+            //         setWm_name(val.name)
+            //         setWm_capacity(val.capacity)
+            //         setWm_hot(val.price.hot)
+            //         setWm_cold(val.price.cold)
+            //         setWm_duration(val.duration)
+            //         setWm_status(val.status)
+            //         return val;
+            //     }
+            // }))
           });
       }, []);
-    console.log(initWm)
-    console.log(wmachines[0])
+    console.log(machine)
+    console.log("", wmachines)
 
     const cancel = async() => {
         setWm_name(initWm.name)
@@ -86,13 +90,63 @@ function EditPage({route, navigation}) {
         setWm_status(initWm.status)
     }
 
-    const updateWmachine = async()=>{
-        const storeRef = doc(db, "laundromat", laundId, "wmachine")
-        console.log(storeRef)
+    const updateWmachine = async(id)=>{
+        const storeRef = doc(db, "laundromat", laundId)
+        //const storeRef = doc(db, "cities", "LA")
+        const tempmachines = wmachines.filter(val=>{
+            if(val.id != machineId){
+                return val
+            }
+        })
+        const temp2machines = [...tempmachines,{
+            id: id, 
+            capacity:wm_capacity,
+            duration:wm_duration, 
+            price:{cold:wm_cold, hot:wm_hot},
+            name:wm_name,
+            status:wm_status,
+            queue:machine.queue
+        }]
+
+        console.log("machine", machine)
+        console.log("init", initWm)
+        console.log("wmachines", wmachines)
+        console.log("เครื่องก็อป1", id, tempmachines)
+        console.log("เครื่องก็อป2", id, temp2machines)
+
+
+        // wmarr.map((item, index) => {
+        //     if(item.id == id){
+        //         indexOfWm = index;
+        //     }}
+        // );
+
         // await updateDoc(storeRef, {
-        //     name:modalLaundName,
-        //     location:new GeoPoint(modalLatitude,modalLongitude)
+        //     ["wmachines."+ indexOfWm +".name"]: wm_name,
+        //     ["wmachines."+ indexOfWm +".capacity"]: wm_capacity,
+        //     ["wmachines."+ indexOfWm +".price.hot"]: wm_hot,
+        //     ["wmachines."+ indexOfWm +".price.cold"]: wm_cold,
+        //     ["wmachines."+ indexOfWm +".duration"]: wm_duration,
+        //     ["wmachines."+ indexOfWm +".status"]: wm_status,
         // });  
+
+        // await updateDoc(storeRef, {
+        //     "wmachines":temp2machines
+        // });
+
+        setInitWm({
+            id: id,
+            name: wm_name,
+            capacity: wm_capacity,
+            price: {hot: wm_hot, cold: wm_cold},
+            duration: wm_duration,
+            status: wm_status,
+            queue:machine.queue
+        })
+
+        await updateDoc(storeRef, {
+            "wmachines":temp2machines
+        });
     }    
 
     const renderItem = ({ item }) => (
@@ -119,14 +173,15 @@ function EditPage({route, navigation}) {
                 <Select selectedValue={wm_status} w="90%" accessibilityLabel="สถานะ" placeholder="สถานะ" _selectedItem={{
                         bg: "teal.600",endIcon: <CheckIcon size="5" />}} onValueChange={(status) => setWm_status(status)}>
                     <Select.Item label="ดี" value="ok" />
-                    <Select.Item label="พัง" value="notok" />
+                    <Select.Item label="พัง" value="notok"/>
+                    <Select.Item label="เข้าคิว" value="queue" />
                 </Select>
             </VStack>
         </HStack>
 
         <Stack direction="row" space={5}>
             <Button bg="indigo.700"  style={{alignSelf:'center', height:50, width:180}} onPress={() => {
-                    updateWmachine();
+                    updateWmachine(initWm.id);
                 }}>
                 <Text fontSize="xl" color="white">บันทึก</Text>
             </Button>
@@ -150,7 +205,7 @@ function EditPage({route, navigation}) {
 
     <Box space={7} alignItems="center" justifyContent="center" mt="5">
         <FlatList 
-            data={wmachines} 
+            data={flatData} 
             renderItem={renderItem} 
             keyExtractor={item=>item.id} 
             contentContainerStyle={{alignItems:"flex-start"}}
