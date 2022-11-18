@@ -21,7 +21,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
-import {userdata} from "../store/userSlice";
+import {userdata, user_id} from "../store/userSlice";
 
 
 function LoginPage({ navigation }) {
@@ -40,12 +40,12 @@ function LoginPage({ navigation }) {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const handleAuth = onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(userdata({
-          uid: user.uid,
           email: user.email
-        }))
+        }));
+
         setSession({
           isLoggedIn: true,
           currentUser: user,
@@ -53,28 +53,9 @@ function LoginPage({ navigation }) {
         });
       }
     });
-
-    return handleAuth()
   }, [])
 
   const handleLogin = () => {
-    // try {
-    //   const response = await signInWithEmailAndPassword(auth, username, password)
-    //   const {user} = response
-      
-    //   setSession({
-    //     isLoggedIn: true,
-    //     currentUser: user,
-    //   });
-    //   navigation.navigate("ManageLaund");
-    // } catch (error) {
-    //   setSession({
-    //     isLoggedIn: false,
-    //     currentUser: null,
-    //     errorMessage: null
-    //   })
-    //   alert("อีเมลหรือรหัสผ่านไม่ถูกต้อง")
-    // }
     signInWithEmailAndPassword(auth, username, password)
     .then((userCredential) => {
       const user = userCredential.user;
