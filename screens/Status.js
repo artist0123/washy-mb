@@ -55,7 +55,7 @@ function StatusPage({navigation}) {
             // setQueues(wmachine?wmachine.queue:[])
             refmachine.current = wmachine
             queues.current = wmachine.queue
-            myqueue.current = wmachine.queue[0]
+            myqueue.current = wmachine.queue[5]
         });
     }, []);
 
@@ -212,7 +212,7 @@ function StatusPage({navigation}) {
                         <Button variant="ghost" colorScheme="blueGray" onPress={() => {
                             setModalVisible(false);
                         }}>
-                            ยกเลิก
+                            กลับ
                         </Button>
                     
                     </Button.Group>
