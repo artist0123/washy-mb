@@ -62,20 +62,6 @@ function EditPage({route, navigation}) {
             setWmachines(snapshot.data().wmachines)
 
             setFlatData([wmachine])
-            
-            // setWmachines(snapshot.data().wmachines.filter( val => {
-            //     if(val.id == machineId){
-            //         setInitWm(val)
-                    
-            //         setWm_name(val.name)
-            //         setWm_capacity(val.capacity)
-            //         setWm_hot(val.price.hot)
-            //         setWm_cold(val.price.cold)
-            //         setWm_duration(val.duration)
-            //         setWm_status(val.status)
-            //         return val;
-            //     }
-            // }))
           });
       }, []);
     console.log(machine)
@@ -92,7 +78,10 @@ function EditPage({route, navigation}) {
 
     const updateWmachine = async(id)=>{
         const storeRef = doc(db, "laundromat", laundId)
+
+        //ไว้ test
         //const storeRef = doc(db, "cities", "LA")
+
         const tempmachines = wmachines.filter(val=>{
             if(val.id != machineId){
                 return val
@@ -120,19 +109,6 @@ function EditPage({route, navigation}) {
         //         indexOfWm = index;
         //     }}
         // );
-
-        // await updateDoc(storeRef, {
-        //     ["wmachines."+ indexOfWm +".name"]: wm_name,
-        //     ["wmachines."+ indexOfWm +".capacity"]: wm_capacity,
-        //     ["wmachines."+ indexOfWm +".price.hot"]: wm_hot,
-        //     ["wmachines."+ indexOfWm +".price.cold"]: wm_cold,
-        //     ["wmachines."+ indexOfWm +".duration"]: wm_duration,
-        //     ["wmachines."+ indexOfWm +".status"]: wm_status,
-        // });  
-
-        // await updateDoc(storeRef, {
-        //     "wmachines":temp2machines
-        // });
 
         setInitWm({
             id: id,

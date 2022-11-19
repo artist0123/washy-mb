@@ -64,7 +64,7 @@ function HomeNavigator() {
       <Stack.Screen
         name="Reserve"
         component={ReservePage}
-        options={{ title: "จองคิว", headerShown: false }}
+        options={{ title: "จองคิว"}}
       ></Stack.Screen>
       <Tab.Screen
         name="Payment"

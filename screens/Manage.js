@@ -93,6 +93,7 @@ function ManagePage({route, navigation}) {
             setModalLongitude(snapshot.data().location._long)
           });
       }, []);
+    console.log(wmachines)
 
     const addMachine =  async()=>{
         // setWmachines([...wmachines, {id:wmachines.length+1,name:"เครื่องซักผ้า"+(wmachines.length+1),capacity:Math.floor(Math.random()*50),state:"ok"}])
@@ -237,7 +238,7 @@ function ManagePage({route, navigation}) {
             </Box>
             <Box  flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
                 <FlatList 
-                    data={wmachines} 
+                    data={wmachines.sort((a,b) => a.name.localeCompare(b.name))} 
                     renderItem={cards} 
                     keyExtractor={item=>item.id} 
                     contentContainerStyle={{alignItems:"flex-start"}}

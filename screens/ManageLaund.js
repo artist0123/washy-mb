@@ -211,9 +211,6 @@ function ManageLaundPage({ navigation }) {
             <Text fontWeight="bold" fontSize="4xl">
               ร้านซักผ้า
             </Text>
-            <Button onPress={() => {}} style={{ height: "50%" }} mr="3">
-              แก้ไขเครื่อง
-            </Button>
             <Button
               onPress={() => {
                 setMode(!mode);
@@ -228,7 +225,7 @@ function ManageLaundPage({ navigation }) {
             onLayout={(event) => setLayout(event.nativeEvent.layout)}
           >
             <FlatList
-              data={laundromat}
+              data={laundromat.sort((a,b) => a.laundromat.name.localeCompare(b.laundromat.name))}
               renderItem={cards}
               keyExtractor={(item) => item.docId}
               contentContainerStyle={{ alignItems: "flex-start" }}
