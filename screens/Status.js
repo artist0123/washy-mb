@@ -55,7 +55,7 @@ function StatusPage({navigation}) {
             // setQueues(wmachine?wmachine.queue:[])
             refmachine.current = wmachine
             queues.current = wmachine.queue
-            myqueue.current = wmachine.queue[5]
+            myqueue.current = wmachine.queue[0]
         });
     }, []);
 
@@ -163,7 +163,7 @@ function StatusPage({navigation}) {
         <VStack space={10} alignItems="center">
             <Circle size="350px" bg="white" borderWidth="4" style={{alignSelf:'center'}}>
                 <Text fontSize="xl">{mode=="washing"?"กำลังซักผ้าของคุณ":mode=="queueing"?"ยังไม่ถึงคิวของคุณ":""}</Text>
-                <Text fontSize="4xl">อีก {displayTime(estimatedTime)}</Text>
+                <Text fontSize="4xl">{mode=="ready"?"ถึงคิวของคุณแล้ว":"อีก "+displayTime(estimatedTime)}</Text>
                 <Text fontSize="2xl">{machine.name}</Text>
                 <Text fontSize="2xl">{machine.capacity} กิโลกรัม</Text>
                 <Text fontSize="xl">{laundInfo.name}</Text>
