@@ -99,8 +99,8 @@ function ManagePage({route, navigation}) {
         // setWmachines([...wmachines, {id:wmachines.length+1,name:"เครื่องซักผ้า"+(wmachines.length+1),capacity:Math.floor(Math.random()*50),state:"ok"}])
         // const docSnap = await getDoc(doc(db, "laundromat","aV419sLiUOvORzANTjYa")) 
         // addDoc(collection(db,"laundromat"),docSnap.data())
-         //   setDoc(doc(db, "cities", "LA"),{name:"cwadwadawd"})
-        //   addDoc(collection(db,"cities"),{name:"auto gen"})
+        // setDoc(doc(db, "cities", "LA"),{name:"cwadwadawd"})
+        // addDoc(collection(db,"cities"),{name:"auto gen"})
         const storeRef = doc(db, "laundromat", laundId)
         let ranNum = Math.floor(Math.random()*99999)
         let date = new Date()
@@ -228,7 +228,11 @@ function ManagePage({route, navigation}) {
     <Box bg="primary.400" h="full">
         <Box bg="primary.200" mx="3" flex={1} display={"flex"} flexDirection="column">
             <Box px="6" mt="5"  flex={1} display="flex" alignItems="center" flexDirection={"row"} justifyContent={"space-between"}>
-                <Text fontWeight="bold" fontSize="4xl" >{laundroName}</Text>
+                <Text fontWeight="bold" fontSize={{
+                    base: "xl",
+                    md: "3xl",
+                    lg: "4xl"
+                }} >{laundroName}</Text>
                 <Box flexDirection={"row"} justifyContent={"space-between"}> 
                     <Button onPress={()=>{setUpdateModalVisible(true)}} style={{height:"50%"}} mr="3">แก้ไขร้าน</Button>
                     

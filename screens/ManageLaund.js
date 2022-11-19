@@ -208,7 +208,7 @@ function ManageLaundPage({ navigation }) {
             flexDirection={"row"}
             justifyContent={"space-between"}
           >
-            <Text fontWeight="bold" fontSize="4xl">
+            <Text fontWeight="bold" fontSize={{base: "4xl", md: "5xl", lg: "6xl"}}>
               ร้านซักผ้า
             </Text>
             <Button

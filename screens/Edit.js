@@ -1,5 +1,5 @@
 import React, { useState,useEffect} from "react";
-import {View} from "react-native";
+import {View, Dimensions} from "react-native";
 import {db} from "../database/firebaseDB";
 import {
     collection,
@@ -48,12 +48,12 @@ function EditPage({route, navigation}) {
             //setwmarr(snapshot.data().wmachines);
             const wmachine = snapshot.data().wmachines.filter(item=>{
                 if(item.id == machineId){
-                    setWm_name(item.name)
-                    setWm_capacity(item.capacity)
-                    setWm_hot(item.price.hot)
-                    setWm_cold(item.price.cold)
-                    setWm_duration(item.duration)
-                    setWm_status(item.status)
+                    setWm_name(String(item.name))
+                    setWm_capacity(String(item.capacity))
+                    setWm_hot(String(item.price.hot))
+                    setWm_cold(String(item.price.cold))
+                    setWm_duration(String(item.duration))
+                    setWm_status(String(item.status))
                 }
                 return item.id == machineId})[0]
 
@@ -77,10 +77,10 @@ function EditPage({route, navigation}) {
     }
 
     const updateWmachine = async(id)=>{
-        const storeRef = doc(db, "laundromat", laundId)
+        //const storeRef = doc(db, "laundromat", laundId)
 
         //ไว้ test
-        //const storeRef = doc(db, "cities", "LA")
+        const storeRef = doc(db, "cities", "LA")
 
         const tempmachines = wmachines.filter(val=>{
             if(val.id != machineId){
@@ -89,9 +89,9 @@ function EditPage({route, navigation}) {
         })
         const temp2machines = [...tempmachines,{
             id: id, 
-            capacity:wm_capacity,
-            duration:wm_duration, 
-            price:{cold:wm_cold, hot:wm_hot},
+            capacity: parseInt(wm_capacity),
+            duration:parseInt(wm_duration), 
+            price:{cold:parseInt(wm_cold), hot:parseInt(wm_hot)},
             name:wm_name,
             status:wm_status,
             queue:machine.queue
@@ -126,28 +126,28 @@ function EditPage({route, navigation}) {
     }    
 
     const renderItem = ({ item }) => (
-    <VStack space={7} alignItems="center" justifyContent="center" mt="5">
-        <Stack space={4} w="75%" maxW="500px" mx="auto">
+    <VStack space={7} flex={1} alignItems="center" justifyContent="center" mt="5" w={[380, 380, 380]} >
+        <Stack space={4} w="100%" >
             <Text fontSize="2xl">ชื่อเครื่องซักผ้า</Text>
-            <Input w="100%" value={wm_name} onChangeText={(name)=>setWm_name(name)}/>
+            <Input w="100%" variant="underlined" value={wm_name} onChangeText={(name)=>setWm_name(name)}/>
             <Text fontSize="2xl">น้ำหนัก</Text>
-            <Input w="100%" value={wm_capacity} onChangeText={(capacity)=>setWm_capacity(capacity)}/>
+            <Input w="100%" variant="underlined" value={wm_capacity} onChangeText={(capacity)=>setWm_capacity(capacity)}/>
         </Stack>
 
-        <HStack space={5}>
+        <HStack space={4} w="100%">
             <VStack w="50%">
                 <Text fontSize="xl">ราคาน้ำร้อน</Text>
-                <Input w="90%" value={wm_hot} onChangeText={(hot)=>setWm_hot(hot)}/>
+                <Input w="90%" variant="underlined" value={wm_hot} onChangeText={(hot)=>setWm_hot(hot)}/>
                 <Text fontSize="xl">เวลาซัก</Text>
-                <Input w="90%" value={wm_duration} onChangeText={(duration)=>setWm_duration(duration)}/>
+                <Input w="90%" variant="underlined"value={wm_duration} onChangeText={(duration)=>setWm_duration(duration)}/>
             </VStack>
 
             <VStack w="50%">
                 <Text fontSize="xl" >ราคาน้ำเย็น</Text>
-                <Input w="90%" value={wm_cold} onChangeText={(cold)=>setWm_cold(cold)}/>
+                <Input w="90%" variant="underlined" value={wm_cold} onChangeText={(cold)=>setWm_cold(cold)}/>
                 <Text fontSize="xl">สถานะ</Text>
                 <Select selectedValue={wm_status} w="90%" accessibilityLabel="สถานะ" placeholder="สถานะ" _selectedItem={{
-                        bg: "teal.600",endIcon: <CheckIcon size="5" />}} onValueChange={(status) => setWm_status(status)}>
+                        bg: "primary.400",endIcon: <CheckIcon size="5" />}} onValueChange={(status) => setWm_status(status)}>
                     <Select.Item label="ดี" value="ok" />
                     <Select.Item label="พัง" value="notok"/>
                     <Select.Item label="เข้าคิว" value="queue" />
@@ -155,7 +155,7 @@ function EditPage({route, navigation}) {
             </VStack>
         </HStack>
 
-        <Stack direction="row" space={5}>
+        <Stack direction="row" space={5} w="100%">
             <Button bg="indigo.700"  style={{alignSelf:'center', height:50, width:180}} onPress={() => {
                     updateWmachine(initWm.id);
                 }}>
@@ -167,6 +167,7 @@ function EditPage({route, navigation}) {
                 <Text fontSize="xl" color="indigo.700">ยกเลิก</Text>
             </Button>
         </Stack>
+
         <Button bg="indigo.700"  style={{alignSelf:'center', height:50, width:200}} onPress={() => {
             navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
         }}>
@@ -178,8 +179,8 @@ function EditPage({route, navigation}) {
     // <><View>
     //       <Heading size="xl" bold m={8}>เครื่องซักผ้า 1</Heading>
     // </View>
-
-    <Box space={7} alignItems="center" justifyContent="center" mt="5">
+    
+    <Box space={7} alignItems="center" justifyContent="center" mt="5" flex={1}>
         <FlatList 
             data={flatData} 
             renderItem={renderItem} 
