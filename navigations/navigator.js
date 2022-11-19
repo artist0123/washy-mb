@@ -34,9 +34,7 @@ function HomeNavigator() {
       <Stack.Screen
         name="Select"
         component={SelectPage}
-        options={{
-          headerShown: false,
-        }}
+        options={{title: "เลือกเครื่องซักผ้า", headerShown: false }}
       ></Stack.Screen>
       <Stack.Screen
         name="Map"

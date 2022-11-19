@@ -161,7 +161,7 @@ function ManageLaundPage({ navigation }) {
         <Center flex={2} bg="coolGray.300">
           <MaterialCommunityIcons
             name="washing-machine"
-            size={24}
+            size={60}
             color="black"
           />
         </Center>

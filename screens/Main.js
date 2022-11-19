@@ -214,7 +214,7 @@ function MainPage({navigation}) {
             p="3%"
           >
             <Box h="6" mb="3%">
-              <Text fontWeight="bold" fontSize="xl" flex={1}>
+              <Text fontWeight="bold" fontSize={{base: "xl",md: "2xl", lg: "3xl"}} flex={1}>
                 การซักของคุณ
               </Text>
             </Box>

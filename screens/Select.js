@@ -127,7 +127,11 @@ function SelectPage({ route, navigation }) {
         display={"flex"}
         flexDirection="column"
       >
-        <Text fontWeight="bold" fontSize="4xl" flex={1}>
+        <Text fontWeight="bold" fontSize={{
+                    base: "3xl",
+                    md: "4xl",
+                    lg: "5xl"
+                }} flex={1}>
           {laundry.name}
         </Text>
         <Text fontSize="md" flex={1}>
@@ -155,7 +159,7 @@ function SelectPage({ route, navigation }) {
 
         <Box flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
           <FlatList
-            data={wmachines}
+            data={wmachines.sort((a,b) => a.name.localeCompare(b.name))}
             renderItem={cards}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ alignItems: "flex-start" }}
