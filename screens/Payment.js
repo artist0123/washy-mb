@@ -70,6 +70,7 @@ function PaymentPage({route,navigation}) {
             user_id:"asdafc",
             id:ranNum.toString(),
             reserve_time:curDate,
+            // finish_time:new Date(curDate.getTime()+(30*1000)),
             finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
             status:"washing"
         }]
@@ -78,13 +79,17 @@ function PaymentPage({route,navigation}) {
             let minus = sweight[a.status] - sweight[b.status]  
             return isNaN(minus)?0:minus
         })
+        function filterQueue(queues=[]){
+            let whitelist = {"washing":0,"in queue":0}
+            return queues.filter((val)=>{return whitelist[val.status] != undefined})
+        }
         const temp2machines = [...tempmachines,{
             id:machine.id, 
             capacity:machine.capacity,
             duration:machine.duration, 
             price:{cold:machine.price.cold,hot:machine.price.hot},
             name:machine.name,
-            status:tempqueues.length>0?"queue":"ok",
+            status:filterQueue(tempqueues).length>0?"queue":"ok",
             queue:tempqueues
         }]
         temp2machines.sort((a,b)=>{

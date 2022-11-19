@@ -1,9 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useKeenSliderNative } from "keen-slider/react-native";
 import { Dimensions, StyleSheet } from "react-native";
 import { Stack, Button, Image, Box, Text, Divider, Icon } from "native-base";
 import Cards from "../components/Cards";
 import { Entypo, Ionicons } from '@expo/vector-icons';
+import { auth, db } from "../database/firebaseDB";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+  GeoPoint,
+  deleteDoc,
+  doc,
+  updateDoc
+} from "firebase/firestore";
 
 function MainPage({navigation}) {
   const [windowsWidth, setWindowsWidth] = useState(
@@ -28,6 +41,87 @@ function MainPage({navigation}) {
     capacity: 10,
     state: "okss",
   };
+
+  const laundromat = useRef([])
+  useEffect(() => {
+    onSnapshot(collection(db, "laundromat"), (snapshot) => {
+      laundromat.current = snapshot.docs.map((doc) => {
+        return { laundromat: doc.data(), docId: doc.id };
+      })
+ 
+    });
+  }, []);
+  useEffect(()=>{
+    setInterval(()=>{
+      laundromat.current.forEach((laund,index)=>{
+        laund.laundromat.wmachines.forEach((mchine,index2)=>{
+          mchine.queue.forEach((queue,index3)=>{
+            if(queue.status == "washing"){
+              console.log(`${queue.id}: ${(new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60}`)
+              if(((new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60) >= 0){
+                console.log(`${queue.id}: finish`)
+                const storeRef = doc(db, "laundromat",laund.docId)
+                const tempmachines = laund.laundromat.wmachines.filter(val=>{
+                    if(val.id != mchine.id){
+                        return val
+                    }
+                })
+                const tempqueues = mchine.queue.filter(val=>{
+                        if(val.id != queue.id){
+                            return val
+                        }
+                })
+                const temp2queues = [...tempqueues,{
+                  id:queue.id,
+                  reserve_time:queue.reserve_time,
+                  finish_time:queue.finish_time,
+                  user_id:queue.user_id,
+                  status:"paid"
+                }]
+                temp2queues.sort((a,b)=>{
+                  let sweight = {"washing":0,"in queue":1,"cancel":2,"paid":3}
+                  let minus = sweight[a.status] - sweight[b.status]  
+                  return isNaN(minus)?0:minus
+                })
+                function filterQueue(queues=[]){
+                  let whitelist = {"washing":0,"in queue":0}
+                  console.log(queues)
+                  return queues.filter((val)=>{return whitelist[val.status] != undefined})
+                }
+                console.log(filterQueue(temp2queues))
+                const temp2machines = [...tempmachines,{
+                    id:mchine.id, 
+                    capacity:mchine.capacity,
+                    duration:mchine.duration, 
+                    price:{cold:mchine.price.cold,hot:mchine.price.hot},
+                    name:mchine.name,
+                    status:filterQueue(temp2queues).length>0?"queue":"ok",
+                    queue:temp2queues
+                }]
+                temp2machines.sort((a,b)=>{
+                    let sweight = {"ok":0,"notok":2,"queue":1}
+                    let minus = sweight[a.status] - sweight[b.status]  
+                    let minus2 = b.capacity - a.capacity
+                    return isNaN(minus)?0:minus==0?minus2:minus
+                  })
+                updateDoc(storeRef, {
+                    "wmachines":temp2machines
+                });
+              }
+              // else if(((new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60) >= -5){
+              //   console.log(`${queue.id}: finish in 5 min`)
+              // }
+            }else if(queue.status == "in queue"){
+              if(index3 == 0){
+                console.log(`${queue.id}: am ready`)
+              }
+            }
+            
+          })
+        })
+      })
+    },1000)
+  },[])
 
   return (
     <Box bg="primary.400" size="full" flex={1} alignItems="stretch">

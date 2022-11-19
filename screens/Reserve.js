@@ -42,12 +42,16 @@ function ReservePage({route, navigation}) {
     onSnapshot(doc(db, "laundromat",laundId), (snapshot) => {
       if(!snapshot.data()){return}
       const wmachine = snapshot.data().wmachines.filter((item)=>{return item.id == machineId})[0]
-      setQueues(wmachine?wmachine.queue:{})
+      setQueues(wmachine?wmachine.queue:[])
       setMachine(wmachine)
       setLaundInfo(snapshot.data())
       setWmachines(snapshot.data().wmachines)
     });
   }, []);
+  function filterQueue(queues=[]){
+    let whitelist = {"washing":0,"in queue":0}
+    return queues.filter((val)=>{return whitelist[val.status] != undefined})
+  }
   const reserveQueue = ()=>{
     const storeRef = doc(db, "laundromat",laundId)
     const tempmachines = wmachines.filter(val=>{
@@ -68,13 +72,14 @@ function ReservePage({route, navigation}) {
       let minus = sweight[a.status] - sweight[b.status]  
       return isNaN(minus)?0:minus
     })
+    
     const temp2machines = [...tempmachines,{
       id:machine.id, 
       capacity:machine.capacity,
       duration:machine.duration, 
       price:{cold:machine.price.cold,hot:machine.price.hot},
       name:machine.name,
-      status:tempqueues.length>0?"queue":"ok",
+      status:filterQueue(tempqueues).length>0?"queue":"ok",
       queue:tempqueues
     }]
     temp2machines.sort((a,b)=>{
@@ -95,13 +100,13 @@ function ReservePage({route, navigation}) {
 
     <VStack space={10} alignItems="center">
         <Circle size="350px" bg="white" borderWidth="4" style={{alignSelf:'center'}}>
-            <Text fontSize="5xl">{queues.length > 0?`อีก ${queues.length} คิว`:"ซักได้เลย!"}</Text>
+            <Text fontSize="5xl">{filterQueue(queues).length > 0?`อีก ${filterQueue(queues).length} คิว`:"ซักได้เลย!"}</Text>
             <Text fontSize="2xl">{machine.name}</Text>
             <Text fontSize="2xl">{machine.capacity} กิโลกรัม</Text>
             <Text fontSize="xl">{laundInfo.name}</Text>
         </Circle>
         
-        {queues.length > 0?
+        {filterQueue(queues).length > 0?
         <Button bg="muted.400"  style={{alignSelf:'center', height:80, width:300}}
         onPress={()=>{reserveQueue()}}
         >
@@ -116,8 +121,8 @@ function ReservePage({route, navigation}) {
 
         
         <HStack space={10} alignItems="center">
-            <Switch size="lg" ml={5} isDisabled={!queues.length>0}/>
-            <Text fontSize="xl" color={!queues.length>0?isActive:""}>เตือนฉันถ้ามีคิวว่าง</Text>
+            <Switch size="lg" ml={5} isDisabled={!filterQueue(queues).length>0}/>
+            <Text fontSize="xl" color={!filterQueue(queues).length>0?isActive:""}>เตือนฉันถ้ามีคิวว่าง</Text>
         </HStack>  
     </VStack>
     </>

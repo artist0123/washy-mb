@@ -71,13 +71,17 @@ function QueuePage({route}) {
                     return val
                 }
         })
+        function filterQueue(queues=[]){
+            let whitelist = {"washing":0,"in queue":0}
+            return queues.filter((val)=>{return whitelist[val.status] != undefined})
+          }
         const temp2machines = [...tempmachines,{
             id:machine.id, 
             capacity:machine.capacity,
             duration:machine.duration, 
             price:{cold:machine.price.cold,hot:machine.price.hot},
             name:machine.name,
-            status:tempqueues.length>0?"queue":"ok",
+            status:filterQueue(tempqueues).length>0?"queue":"ok",
             queue:tempqueues
         }]
         temp2machines.sort((a,b)=>{
