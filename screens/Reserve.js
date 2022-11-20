@@ -113,8 +113,8 @@ function ReservePage({route, navigation}) {
             <Text fontSize="xl" color="white">จองคิว</Text>
         </Button>:
         <Button bg="muted.400"  style={{alignSelf:'center', height:80, width:300}}
-        // onPress={()=>{navigation.navigate("Payment", {laundId:laundId, machineId:machineId,queueId:null})}}
-        onPress={()=>{navigation.navigate("QRcode", {laundId:laundId, machineId:machineId,laundName:laundInfo.name,queueId:null})}}
+        onPress={()=>{navigation.navigate("Payment", {laundId:laundId, machineId:machineId,queueId:null})}}
+        // onPress={()=>{navigation.navigate("QRcode", {laundId:laundId, machineId:machineId,laundName:laundInfo.name,queueId:null})}}
         >
             <Text fontSize="xl" color="white">ซักผ้า</Text>
         </Button>}

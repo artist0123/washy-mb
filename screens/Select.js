@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { db, auth } from "../database/firebaseDB";
 import {
   collection,
@@ -31,12 +31,15 @@ import {
   Linking,
   Platform
 } from "react-native";
+import { log } from "react-native-reanimated";
 
 function SelectPage({ route, navigation }) {
   const { laundry } = route.params;
-  console.log("laundry = ", laundry);
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const [wmachines, setWmachines] = useState([]);
+  const [timelist, setTimelist] = useState([])
+
+  const refwmachines = useRef([])
   useEffect(() => {
     // onSnapshot(collection(db, "laundromat"), (snapshot) => {
     //   setWmachines(...snapshot.docs.map((doc) => {console.log(doc.id);return doc.get("wmachines")}));
@@ -44,9 +47,48 @@ function SelectPage({ route, navigation }) {
     onSnapshot(doc(db, "laundromat", laundry.docId), (snapshot) => {
       if(!snapshot.data()){return}
       setWmachines(snapshot.data().wmachines);
+      refwmachines.current = snapshot.data().wmachines
     });
   }, []);
-  console.log(wmachines);
+  useEffect(()=>{
+    setInterval(()=>{
+      let arr = []
+      refwmachines.current.forEach((val,ind)=>{
+        if(val.status == "queue"){
+          let estimate = 0
+          if(val.queue[0].status=="washing"){
+            estimate = val.queue[0].finish_time.toDate().getTime() + (val.duration * (val.queue.length-1))*60*1000
+          }else{
+            estimate = new Date().getTime() + (val.duration * (val.queue.length))*60*1000
+          }
+          let filterqueue = val.queue.filter((val2,ind2)=>val2.status=="washing"||val2.status=="in queue")
+          arr.push({machine:val,time:estimate-new Date().getTime(),count:filterqueue.length})
+          
+        }
+      })
+      setTimelist(arr)
+
+    },1000)
+  },[])
+
+  function displayTime(millis){
+    let out = ""
+    let milli = millis%1000%60%60%24
+    let sec = Math.floor(millis/1000%60)
+    let min = Math.floor(millis/1000/60%60)
+    let hour = Math.floor(millis/1000/60/60)
+    // let day = Math.floor(millis/1000/60/60/24)
+    // if(day >= 1){
+    //     out += day + " วัน "
+    // }
+    if(hour >= 1){
+        out += hour + " ชั่วโมง "
+    }
+    out += min + " นาที"
+    return out
+  }
+  
+
   const cards = ({ item }) => {
     // Ready State
     if (item.status == "ok") {
@@ -83,7 +125,9 @@ function SelectPage({ route, navigation }) {
               {item.name}
             </Text>
             <Text fontSize={"sm"} color="#454545">
-              อีก 40 นาที(1 คิว)
+              อีก
+              {timelist.filter((val,ind)=>val.machine.id == item.id)[0]?displayTime(timelist.filter((val,ind)=>val.machine.id == item.id)[0].time):"0 นาที"}
+              ({timelist.filter((val,ind)=>val.machine.id == item.id)[0]?timelist.filter((val,ind)=>val.machine.id == item.id)[0].count:"0 คิว"} คิว)
             </Text>
           </Box>
         </TouchableOpacity>
