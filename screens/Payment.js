@@ -37,7 +37,7 @@ import { async } from "@firebase/util";
 
 
 function PaymentPage({route,navigation}) {
-    const {machineId, laundId} = route.params
+    const {machineId, laundId,queueId} = route.params
 
     const [queues, setQueues] = useState([])
     const [machine,setMachine] = useState({})
@@ -58,58 +58,113 @@ function PaymentPage({route,navigation}) {
     }, []);
 
     const onPaySuccess = async(method)=>{
+        console.log("queue"+queueId, queueId==null)
         const storeRef = doc(db, "laundromat",laundId)
         const tempmachines = wmachines.filter(val=>{
             if(val.id != machineId){
                 return val
             }
         })
-        let ranNum = Math.floor(Math.random()*99999)
-        let curDate = new Date()
-        const tempqueues = [...queues,{
-            user_id:"asdafc",
-            id:ranNum.toString(),
-            reserve_time:curDate,
-            // finish_time:new Date(curDate.getTime()+(30*1000)),
-            finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
-            status:"washing"
-        }]
-        tempqueues.sort((a,b)=>{
-            let sweight = {"washing":0,"in queue":1,"cancel":2,"paid":3}
-            let minus = sweight[a.status] - sweight[b.status]  
-            return isNaN(minus)?0:minus
+        const myqueue = queues.filter(val=>{
+            if(val.id == queueId){
+                return val
+            }
         })
         function filterQueue(queues=[]){
             let whitelist = {"washing":0,"in queue":0}
             return queues.filter((val)=>{return whitelist[val.status] != undefined})
         }
-        const temp2machines = [...tempmachines,{
-            id:machine.id, 
-            capacity:machine.capacity,
-            duration:machine.duration, 
-            price:{cold:machine.price.cold,hot:machine.price.hot},
-            name:machine.name,
-            status:filterQueue(tempqueues).length>0?"queue":"ok",
-            queue:tempqueues
-        }]
-        temp2machines.sort((a,b)=>{
-            let sweight = {"ok":0,"notok":2,"queue":1}
+        let tempqueues = []
+        let temp2queues = []
+        let ranNum = Math.floor(Math.random()*99999)
+        let curDate = new Date()
+        if(queueId == null){
+            tempqueues = [...queues,{
+                user_id:"asdafc",
+                id:ranNum.toString(),
+                reserve_time:curDate,
+                // finish_time:new Date(curDate.getTime()+(30*1000)),
+                finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
+                status:"washing"
+            }]
+            tempqueues.sort((a,b)=>{
+                let sweight = {"washing":0,"in queue":1,"cancel":2,"paid":3}
+                let minus = sweight[a.status] - sweight[b.status]  
+                return isNaN(minus)?0:minus
+            })
+            const temp2machines = [...tempmachines,{
+                id:machine.id, 
+                capacity:machine.capacity,
+                duration:machine.duration, 
+                price:{cold:machine.price.cold,hot:machine.price.hot},
+                name:machine.name,
+                status: filterQueue(tempqueues).length>0?"queue":"ok",
+                queue:tempqueues
+            }]
+            temp2machines.sort((a,b)=>{
+                let sweight = {"ok":0,"notok":2,"queue":1}
+                let minus = sweight[a.status] - sweight[b.status]  
+                let minus2 = b.capacity - a.capacity
+                return isNaN(minus)?0:minus==0?minus2:minus
+            })
+            updateDoc(storeRef, {
+                "wmachines":temp2machines
+            });
+            addDoc(collection(db, "payment"), {
+                user_id:"asdafc",
+                id:ranNum.toString(),
+                pay_time:curDate,
+                pay_price:isCool?machine.price.cold:machine.price.hot,
+                pay_method:method
+            });
+            setShowModal(true)
+
+        }else{
+            tempqueues = queues.filter(val=>{
+                if(val.id != queueId){
+                    return val
+                }
+            })
+            temp2queues = [...tempqueues,{
+            id:myqueue[0].id,
+            reserve_time:myqueue[0].reserve_time,
+            finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
+            user_id:myqueue[0].user_id,
+            status:"washing"
+            }]
+            temp2queues.sort((a,b)=>{
+            let sweight = {"washing":0,"in queue":1,"cancel":2,"paid":3}
             let minus = sweight[a.status] - sweight[b.status]  
-            let minus2 = b.capacity - a.capacity
-            return isNaN(minus)?0:minus==0?minus2:minus
-        })
-        updateDoc(storeRef, {
-            "wmachines":temp2machines
-        });
-        addDoc(collection(db, "payment"), {
-            user_id:"asdafc",
-            id:ranNum.toString(),
-            pay_time:curDate,
-            pay_price:isCool?machine.price.cold:machine.price.hot,
-            pay_method:method
-        });
-        setShowModal(true)
-   
+            return isNaN(minus)?0:minus
+            })
+
+            const temp2machines = [...tempmachines,{
+                id:machine.id, 
+                capacity:machine.capacity,
+                duration:machine.duration, 
+                price:{cold:machine.price.cold,hot:machine.price.hot},
+                name:machine.name,
+                status: filterQueue(temp2queues).length>0?"queue":"ok",
+                queue:temp2queues
+            }]
+            temp2machines.sort((a,b)=>{
+                let sweight = {"ok":0,"notok":2,"queue":1}
+                let minus = sweight[a.status] - sweight[b.status]  
+                let minus2 = b.capacity - a.capacity
+                return isNaN(minus)?0:minus==0?minus2:minus
+            })
+            updateDoc(storeRef, {
+                "wmachines":temp2machines
+            });
+            addDoc(collection(db, "payment"), {
+                user_id:myqueue[0].user_id,
+                id:myqueue[0].id,
+                pay_time:curDate,
+                pay_price:isCool?machine.price.cold:machine.price.hot,
+                pay_method:method
+            });
+            setShowModal(true)
+        }
     }
     return (
     <Box bg="primary.400" h="full">

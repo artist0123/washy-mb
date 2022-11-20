@@ -14,7 +14,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
 
 function QRcodePage({navigation, route}) {
-  const {machineId, laundId,laundName} = route.params
+  const {machineId, laundId,laundName,queueId} = route.params
   const [scanned, setScanned] = useState(false);
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -45,7 +45,8 @@ function QRcodePage({navigation, route}) {
       console.log(_data.machineId, _data.laundId)
       console.log("send ",machineId,laundId)
       if(machineId == _data.machineId && laundId == _data.laundId){
-        navigation.navigate("Payment",{machineId:_data.machineId,laundId:_data.laundId})
+        navigation.navigate("Payment",{machineId:_data.machineId,laundId:_data.laundId,queueId:queueId
+      })  
       }else{
         alert(`machine not matched(select:${laundId}#${machineId}, scan:${_data.laundId}#${_data.machineId})`)
       }

@@ -82,7 +82,7 @@ function StatusPage({navigation}) {
                     let mytime = myqueue.current.finish_time.toDate().getTime()
                     setEstimatedTime(mytime-new Date().getTime())
                 }else if(myqueue.current.status == "in queue"){
-                    setMode("ready")
+                    setMode("ready")  
                 }
             }
         },1000)
@@ -149,7 +149,7 @@ function StatusPage({navigation}) {
           })
           console.log(temp2machines)
         updateDoc(storeRef, {
-            "wmachines":temp2machines
+            "wmachines":temp2machines 
         });
         console.log(navigation)
         navigation.navigate("HomeTab")
@@ -176,7 +176,10 @@ function StatusPage({navigation}) {
             <Button bg="danger.900"  style={{alignSelf:'center', height:80, width:300, opacity:1}} onPress={()=>setModalVisible(true)}>
                 <Text fontSize="xl" color="white">ยกเลิกคิว</Text>
             </Button>:
-            <Button bg="muted.400"  style={{alignSelf:'center', height:80, width:300, opacity:1}}>
+            <Button bg="muted.400"  style={{alignSelf:'center', height:80, width:300, opacity:1}} 
+            // onPress={()=>{navigation.navigate("Payment",{machineId:machineId,laundId:laundId,queueId:myqueue.current.id})}}
+            onPress={()=>{navigation.navigate("QRcode",{machineId:machineId,laundId:laundId,queueId:myqueue.current.id})}}
+            >
                 <Text fontSize="xl" color="white">ซักผ้า</Text>
             </Button>
             }
