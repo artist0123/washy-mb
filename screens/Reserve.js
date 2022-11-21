@@ -27,6 +27,7 @@ import {
   arrayUnion, 
   arrayRemove 
 } from "firebase/firestore";
+import { getData } from "../App";
 
 
  const isActive = "muted.200"
@@ -52,7 +53,7 @@ function ReservePage({route, navigation}) {
     let whitelist = {"washing":0,"in queue":0}
     return queues.filter((val)=>{return whitelist[val.status] != undefined})
   }
-  const reserveQueue = ()=>{
+  const reserveQueue = async()=>{
     const storeRef = doc(db, "laundromat",laundId)
     const tempmachines = wmachines.filter(val=>{
       if(val.id != machineId){
@@ -60,8 +61,9 @@ function ReservePage({route, navigation}) {
       }
     })
     let ranNum = Math.floor(Math.random()*99999)
+    let userid= await getData()
     const tempqueues = [...queues,{
-      user_id:"asdafc",
+      user_id:userid,
       id:ranNum.toString(),
       reserve_time:new Date(),
       finish_time:null,

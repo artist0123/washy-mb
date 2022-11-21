@@ -56,12 +56,13 @@ function SelectPage({ route, navigation }) {
       refwmachines.current.forEach((val,ind)=>{
         if(val.status == "queue"){
           let estimate = 0
-          if(val.queue[0].status=="washing"){
-            estimate = val.queue[0].finish_time.toDate().getTime() + (val.duration * (val.queue.length-1))*60*1000
-          }else{
-            estimate = new Date().getTime() + (val.duration * (val.queue.length))*60*1000
-          }
           let filterqueue = val.queue.filter((val2,ind2)=>val2.status=="washing"||val2.status=="in queue")
+          if(filterqueue[0].status=="washing"){
+            estimate = filterqueue[0].finish_time.toDate().getTime() + (val.duration * (filterqueue.length-1))*60*1000
+          }else{
+            estimate = new Date().getTime() + (val.duration * (filterqueue.length))*60*1000
+          }
+          
           arr.push({machine:val,time:estimate-new Date().getTime(),count:filterqueue.length})
           
         }
@@ -77,10 +78,6 @@ function SelectPage({ route, navigation }) {
     let sec = Math.floor(millis/1000%60)
     let min = Math.floor(millis/1000/60%60)
     let hour = Math.floor(millis/1000/60/60)
-    // let day = Math.floor(millis/1000/60/60/24)
-    // if(day >= 1){
-    //     out += day + " วัน "
-    // }
     if(hour >= 1){
         out += hour + " ชั่วโมง "
     }
@@ -125,8 +122,8 @@ function SelectPage({ route, navigation }) {
               {item.name}
             </Text>
             <Text fontSize={"sm"} color="#454545">
-              อีก
-              {timelist.filter((val,ind)=>val.machine.id == item.id)[0]?displayTime(timelist.filter((val,ind)=>val.machine.id == item.id)[0].time):"0 นาที"}
+              อีก &nbsp;
+               {timelist.filter((val,ind)=>val.machine.id == item.id)[0]?displayTime(timelist.filter((val,ind)=>val.machine.id == item.id)[0].time):"0 นาที"}
               ({timelist.filter((val,ind)=>val.machine.id == item.id)[0]?timelist.filter((val,ind)=>val.machine.id == item.id)[0].count:"0 คิว"} คิว)
             </Text>
           </Box>

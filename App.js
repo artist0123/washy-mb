@@ -9,17 +9,21 @@ import { uuidv4 } from "@firebase/util";
 async function storeData(value) {
   try {
     await AsyncStorage.setItem("user_id", value);
-  } catch (e) {
+  } catch (e) { 
     console.error(e);
   }
 }
 
-async function getData() {
+export async function getData() {
   try {
     const value = await AsyncStorage.getItem("user_id");
-    console.log("AsyncStorage value: ");
+    // console.log("AsyncStorage value: ");
     if (value !== null) {
       console.log(value);
+      return value
+    }else{
+      storeData(uuidv4())
+      return getData()
     }
     // return value;
   } catch (e) {
@@ -28,10 +32,7 @@ async function getData() {
 }
 
 export default function App() {
-
-  getData();
-  storeData(uuidv4());
-  getData();
+  
   return (
     <Provider store={store}>
       <NativeBaseProvider>

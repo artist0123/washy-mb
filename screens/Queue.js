@@ -151,7 +151,7 @@ function QueuePage({route}) {
 
 
         {/* Modal */}
-        <Modal isOpen={modalVisible} onClose={setModalVisible} size={"md"}>
+        <Modal isOpen={modalVisible} onClose={setModalVisible} size={"xl"}>
         <Modal.Content maxH="212">
           <Modal.CloseButton />
           <Modal.Header>{"คุณต้องการที่จะนำ "+(!chooseItem?"None":chooseItem.user_id)+" ออกจากคิว?"}</Modal.Header>
@@ -160,7 +160,7 @@ function QueuePage({route}) {
                 <Button colorScheme={"red"} onPress={() => {
                   setModalVisible(false);onDelete(chooseItem.id)
                 }}>
-                    {"นำ "+(!chooseItem?"None":chooseItem.user_id)+" ออก"}
+                    นำคิวออก
                 </Button>
                 <Button variant="ghost" colorScheme="blueGray" onPress={() => {
                     setModalVisible(false);setChooseItem(null)

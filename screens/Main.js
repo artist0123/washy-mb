@@ -17,6 +17,8 @@ import {
   doc,
   updateDoc
 } from "firebase/firestore";
+import { getData } from "../App";
+
 
 function MainPage({navigation}) {
   const [windowsWidth, setWindowsWidth] = useState(
@@ -48,11 +50,13 @@ function MainPage({navigation}) {
       laundromat.current = snapshot.docs.map((doc) => {
         return { laundromat: doc.data(), docId: doc.id };
       })
+
  
     });
   }, []);
   useEffect(()=>{
-    setInterval(()=>{
+    setInterval(async()=>{
+      let userid = await getData()
       laundromat.current.forEach((laund,index)=>{
         laund.laundromat.wmachines.forEach((mchine,index2)=>{
           mchine.queue.forEach((queue,index3)=>{
@@ -112,7 +116,7 @@ function MainPage({navigation}) {
               //   console.log(`${queue.id}: finish in 5 min`)
               // }
             }else if(queue.status == "in queue"){
-              if(index3 == 0){
+              if(index3 == 0 && userid == queue.user_id){
                 console.log(`${queue.id}: am ready`)
               }
             }

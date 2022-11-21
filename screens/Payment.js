@@ -32,6 +32,7 @@ import {
   arrayRemove 
 } from "firebase/firestore";
 import { async } from "@firebase/util";
+import { getData } from "../App";
 
 
 
@@ -78,9 +79,10 @@ function PaymentPage({route,navigation}) {
         let temp2queues = []
         let ranNum = Math.floor(Math.random()*99999)
         let curDate = new Date()
+        let userid = await getData()
         if(queueId == null){
             tempqueues = [...queues,{
-                user_id:"asdafc",
+                user_id:userid,
                 id:ranNum.toString(),
                 reserve_time:curDate,
                 // finish_time:new Date(curDate.getTime()+(30*1000)),
@@ -111,7 +113,7 @@ function PaymentPage({route,navigation}) {
                 "wmachines":temp2machines
             });
             addDoc(collection(db, "payment"), {
-                user_id:"asdafc",
+                user_id:userid,
                 id:ranNum.toString(),
                 pay_time:curDate,
                 pay_price:isCool?machine.price.cold:machine.price.hot,
