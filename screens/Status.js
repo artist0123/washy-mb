@@ -162,7 +162,7 @@ function StatusPage({navigation}) {
 
     return (
         <><View>
-            <Heading size="xl" bold m={8}>สถานะ</Heading>
+            <Heading size="xl" bold m={8} mt={9}>สถานะ</Heading>
         </View>
     
         <VStack space={10} alignItems="center">
