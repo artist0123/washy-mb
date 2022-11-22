@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useKeenSliderNative } from "keen-slider/react-native";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet , Vibration} from "react-native";
 import { Stack, Button, Image, Box, Text, Divider, Icon,Modal } from "native-base";
 import Cards from "../components/Cards";
 import { Entypo, Ionicons } from "@expo/vector-icons";
@@ -17,7 +17,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { getData, getSwitch } from "../App";
+import { getData, getSwitch, setSwitch } from "../App";
 
 function MainPage({ navigation }) {
   const [nearCompleteModal, setNearCompleteModal] = useState(false)
@@ -56,6 +56,8 @@ function MainPage({ navigation }) {
   useEffect(() => {
     setInterval(async () => {
       let userid = await getData();
+      let near = await getSwitch('near')
+      let qready = await getSwitch('qready')
       laundromat.current.forEach((laund, index) => {
         laund.laundromat.wmachines.forEach((mchine, index2) => {
           mchine.queue.forEach((queue, index3) => {
@@ -139,14 +141,23 @@ function MainPage({ navigation }) {
                   wmachines: temp2machines,
                 });
               }
-              else if(((new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60) >= -5){
+              else if(((new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60) >= -5 && userid == queue.user_id ){
                 console.log(`${queue.id}: finish in 5 min`)
-                setNearCompleteModal(true)
+                if(near == "true"){
+                  setNearCompleteModal(true)  
+                  setSwitch('near', false)
+                  Vibration.vibrate(5 * ONE_SECOND_IN_MS)
+                }
               }
             } else if (queue.status == "in queue") {
               if (index3 == 0 && userid == queue.user_id) {
-                console.log(`${queue.id}: am ready`);
-                // setQueueReadyModal(true)
+                console.log(`${queue.id}: am ready`, typeof qready);
+                if(qready == "true"){
+                  setQueueReadyModal(true)
+                  setSwitch('qready', false)
+                  Vibration.vibrate(2 * ONE_SECOND_IN_MS)
+                }
+                console.log(near, qready)
               }
             }
           });

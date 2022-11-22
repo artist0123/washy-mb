@@ -28,14 +28,15 @@ import {
   arrayRemove 
 } from "firebase/firestore";
 import { async } from "@firebase/util";
+import { getSwitch, setSwitch } from "../App";
 
 
 function StatusPage({navigation}) {
-    const {machineId, laundId,queueId} = {machineId:"68650",laundId:"aV419sLiUOvORzANTjYa",queueId:"36099"}
+    const {machineId, laundId,queueId} = {machineId:"68650",laundId:"aV419sLiUOvORzANTjYa",queueId:"4337"}
 
     const [showModal, setShowModal] = useState(false);
-    
-
+    const [nearSwitchEnable, setNearSwitchEnable] = useState(false)
+    const [qreadySwitchEnable, setQreadySwitchEnable] = useState(false)
     
     const [machine,setMachine] = useState({})
     const [laundInfo, setLaundInfo] = useState({})
@@ -48,6 +49,17 @@ function StatusPage({navigation}) {
     const queues = useRef([])
     const myqueue = useRef({})
     const refmachine = useRef({})
+
+    async function nearToggle(val){
+        setNearSwitchEnable(val)   
+        await setSwitch('near', val)
+        console.log(await getSwitch('near'), val,"near")
+    }
+    async function qreadyToggle(val){
+        setQreadySwitchEnable(val)   
+        await setSwitch('qready', val)
+        console.log(await getSwitch('qready'), val,"qready")
+    }
     useEffect(() => {
         onSnapshot(doc(db, "laundromat",laundId), (snapshot) => {
             if(!snapshot.data()){return}
@@ -60,7 +72,11 @@ function StatusPage({navigation}) {
             queues.current = wmachine.queue
             myqueue.current = wmachine.queue.filter((q)=>q.id == queueId)[0]
         });
-        
+        (async()=>{
+            setNearSwitchEnable((await getSwitch('near'))=="true")
+            setQreadySwitchEnable((await getSwitch('qready'))=="true")
+        })()
+
     }, []);
 
 //  finish time + duration*คนข้างหน้า
@@ -87,6 +103,7 @@ function StatusPage({navigation}) {
                     setEstimatedTime(mytime-new Date().getTime())
                 }else if(myqueue.current.status == "in queue"){
                     setMode("ready")  
+
                 }
             }
         },1000)
@@ -189,11 +206,16 @@ function StatusPage({navigation}) {
             </Button>
             }
 
-            
+            {mode=="washing"?
             <HStack space={10} alignItems="center">
-                <Switch size="lg" ml={5}/>
+                <Switch size="lg" ml={5} value={nearSwitchEnable} onValueChange={(val)=>{nearToggle(val)}}/>
                 <Text fontSize="xl">เตือนฉันถ้าใกล้ซักเสร็จ</Text>
-            </HStack>  
+            </HStack>:mode=="queueing"?
+            <HStack space={10} alignItems="center">
+                <Switch size="lg" ml={5} value={qreadySwitchEnable} onValueChange={(val)=>{qreadyToggle(val)}}/>
+                <Text fontSize="xl">เตือนฉันถ้าถึงคิวของฉัน</Text>
+            </HStack>  :""}
+            
 
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
                 <Modal.Content maxWidth="350">

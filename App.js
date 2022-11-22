@@ -18,7 +18,6 @@ export async function getData() {
     const value = await AsyncStorage.getItem("user_id");
     // console.log("AsyncStorage value: ");
     if (value !== null) {
-      console.log(value);
       return value
     }else{
       storeData(uuidv4())
