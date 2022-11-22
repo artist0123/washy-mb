@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useKeenSliderNative } from "keen-slider/react-native";
 import { Dimensions, StyleSheet } from "react-native";
-import { Stack, Button, Image, Box, Text, Divider, Icon } from "native-base";
+import { Stack, Button, Image, Box, Text, Divider, Icon,Modal } from "native-base";
 import Cards from "../components/Cards";
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../database/firebaseDB";
 import {
   addDoc,
@@ -15,12 +15,13 @@ import {
   GeoPoint,
   deleteDoc,
   doc,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
-import { getData } from "../App";
+import { getData, getSwitch } from "../App";
 
-
-function MainPage({navigation}) {
+function MainPage({ navigation }) {
+  const [nearCompleteModal, setNearCompleteModal] = useState(false)
+  const [queueReadyModal, setQueueReadyModal] = useState(false)
   const [windowsWidth, setWindowsWidth] = useState(
     Dimensions.get("window").width
   );
@@ -44,88 +45,115 @@ function MainPage({navigation}) {
     state: "okss",
   };
 
-  const laundromat = useRef([])
+  const laundromat = useRef([]);
   useEffect(() => {
     onSnapshot(collection(db, "laundromat"), (snapshot) => {
       laundromat.current = snapshot.docs.map((doc) => {
         return { laundromat: doc.data(), docId: doc.id };
-      })
-
- 
+      });
     });
   }, []);
-  useEffect(()=>{
-    setInterval(async()=>{
-      let userid = await getData()
-      laundromat.current.forEach((laund,index)=>{
-        laund.laundromat.wmachines.forEach((mchine,index2)=>{
-          mchine.queue.forEach((queue,index3)=>{
-            if(queue.status == "washing"){
-              console.log(`${queue.id}: ${(new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60}`)
-              if(((new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60) >= 0){
-                console.log(`${queue.id}: finish`)
-                const storeRef = doc(db, "laundromat",laund.docId)
-                const tempmachines = laund.laundromat.wmachines.filter(val=>{
-                    if(val.id != mchine.id){
-                        return val
+  useEffect(() => {
+    setInterval(async () => {
+      let userid = await getData();
+      laundromat.current.forEach((laund, index) => {
+        laund.laundromat.wmachines.forEach((mchine, index2) => {
+          mchine.queue.forEach((queue, index3) => {
+            if (queue.status == "washing") {
+              console.log(
+                `${queue.id}: ${
+                  (new Date().getTime() -
+                    queue.finish_time.toDate().getTime()) /
+                  1000 /
+                  60
+                }`
+              );
+              if (
+                (new Date().getTime() - queue.finish_time.toDate().getTime()) /
+                  1000 /
+                  60 >=
+                0
+              ) {
+                console.log(`${queue.id}: finish`);
+                const storeRef = doc(db, "laundromat", laund.docId);
+                const tempmachines = laund.laundromat.wmachines.filter(
+                  (val) => {
+                    if (val.id != mchine.id) {
+                      return val;
                     }
-                })
-                const tempqueues = mchine.queue.filter(val=>{
-                        if(val.id != queue.id){
-                            return val
-                        }
-                })
-                const temp2queues = [...tempqueues,{
-                  id:queue.id,
-                  reserve_time:queue.reserve_time,
-                  finish_time:queue.finish_time,
-                  user_id:queue.user_id,
-                  status:"paid"
-                }]
-                temp2queues.sort((a,b)=>{
-                  let sweight = {"washing":0,"in queue":1,"cancel":2,"paid":3}
-                  let minus = sweight[a.status] - sweight[b.status]  
-                  return isNaN(minus)?0:minus
-                })
-                function filterQueue(queues=[]){
-                  let whitelist = {"washing":0,"in queue":0}
-                  console.log(queues)
-                  return queues.filter((val)=>{return whitelist[val.status] != undefined})
+                  }
+                );
+                const tempqueues = mchine.queue.filter((val) => {
+                  if (val.id != queue.id) {
+                    return val;
+                  }
+                });
+                const temp2queues = [
+                  ...tempqueues,
+                  {
+                    id: queue.id,
+                    reserve_time: queue.reserve_time,
+                    finish_time: queue.finish_time,
+                    user_id: queue.user_id,
+                    status: "paid",
+                  },
+                ];
+                temp2queues.sort((a, b) => {
+                  let sweight = {
+                    washing: 0,
+                    "in queue": 1,
+                    cancel: 2,
+                    paid: 3,
+                  };
+                  let minus = sweight[a.status] - sweight[b.status];
+                  return isNaN(minus) ? 0 : minus;
+                });
+                function filterQueue(queues = []) {
+                  let whitelist = { washing: 0, "in queue": 0 };
+                  console.log(queues);
+                  return queues.filter((val) => {
+                    return whitelist[val.status] != undefined;
+                  });
                 }
-                console.log(filterQueue(temp2queues))
-                const temp2machines = [...tempmachines,{
-                    id:mchine.id, 
-                    capacity:mchine.capacity,
-                    duration:mchine.duration, 
-                    price:{cold:mchine.price.cold,hot:mchine.price.hot},
-                    name:mchine.name,
-                    status:filterQueue(temp2queues).length>0?"queue":"ok",
-                    queue:temp2queues
-                }]
-                temp2machines.sort((a,b)=>{
-                    let sweight = {"ok":0,"notok":2,"queue":1}
-                    let minus = sweight[a.status] - sweight[b.status]  
-                    let minus2 = b.capacity - a.capacity
-                    return isNaN(minus)?0:minus==0?minus2:minus
-                  })
+                console.log(filterQueue(temp2queues));
+                const temp2machines = [
+                  ...tempmachines,
+                  {
+                    id: mchine.id,
+                    capacity: mchine.capacity,
+                    duration: mchine.duration,
+                    price: { cold: mchine.price.cold, hot: mchine.price.hot },
+                    name: mchine.name,
+                    status:
+                      filterQueue(temp2queues).length > 0 ? "queue" : "ok",
+                    queue: temp2queues,
+                  },
+                ];
+                temp2machines.sort((a, b) => {
+                  let sweight = { ok: 0, notok: 2, queue: 1 };
+                  let minus = sweight[a.status] - sweight[b.status];
+                  let minus2 = b.capacity - a.capacity;
+                  return isNaN(minus) ? 0 : minus == 0 ? minus2 : minus;
+                });
                 updateDoc(storeRef, {
-                    "wmachines":temp2machines
+                  wmachines: temp2machines,
                 });
               }
-              // else if(((new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60) >= -5){
-              //   console.log(`${queue.id}: finish in 5 min`)
-              // }
-            }else if(queue.status == "in queue"){
-              if(index3 == 0 && userid == queue.user_id){
-                console.log(`${queue.id}: am ready`)
+              else if(((new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60) >= -5){
+                console.log(`${queue.id}: finish in 5 min`)
+                setNearCompleteModal(true)
+              }
+            } else if (queue.status == "in queue") {
+              if (index3 == 0 && userid == queue.user_id) {
+                console.log(`${queue.id}: am ready`);
+                // setQueueReadyModal(true)
               }
             }
-            
-          })
-        })
-      })
-    },1000)
-  },[])
+          });
+        });
+      });
+    }, 1000);
+  }, []);
 
   return (
     <Box bg="primary.400" size="full" flex={1} alignItems="stretch">
@@ -172,13 +200,14 @@ function MainPage({navigation}) {
           alignItems="stretch"
           justifyItems="stretch"
         >
-         
           <Button
             h={"100%"}
             flexGrow="1"
             colorScheme="primary"
             variant={"solid"}
-            startIcon={<Icon size="md" as={Entypo} name="location-pin" color="white" />}
+            startIcon={
+              <Icon size="md" as={Entypo} name="location-pin" color="white" />
+            }
             onPress={() => {
               navigation.navigate("Map");
               console.log("hello");
@@ -189,7 +218,9 @@ function MainPage({navigation}) {
           <Button
             h={"100%"}
             variant={"solid"}
-            startIcon={<Icon size="md" as={Ionicons} name="person" color="white" />}
+            startIcon={
+              <Icon size="md" as={Ionicons} name="person" color="white" />
+            }
             colorScheme="info"
             onPress={() => {
               navigation.navigate("Login");
@@ -218,7 +249,11 @@ function MainPage({navigation}) {
             p="3%"
           >
             <Box h="6" mb="3%">
-              <Text fontWeight="bold" fontSize={{base: "xl",md: "2xl", lg: "3xl"}} flex={1}>
+              <Text
+                fontWeight="bold"
+                fontSize={{ base: "xl", md: "2xl", lg: "3xl" }}
+                flex={1}
+              >
                 การซักของคุณ
               </Text>
             </Box>
@@ -232,6 +267,24 @@ function MainPage({navigation}) {
           </Box>
         </Stack>
       </Stack>
+
+      {/* Modal ถึงคิว */}
+      <Modal isOpen={queueReadyModal} onClose={() => setQueueReadyModal(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.Body>
+            <Text>ถึงคิวซักผ้าของคุณแล้ว</Text>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+
+      {/* ใกล้ซักเสร็จ modal */}
+      <Modal isOpen={nearCompleteModal} onClose={() => setNearCompleteModal(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.Body>
+            <Text>ผ้าของคุณจะซักเสร็จภายใน 5 นาที</Text>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
     </Box>
   );
 }

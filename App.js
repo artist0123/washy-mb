@@ -13,7 +13,6 @@ async function storeData(value) {
     console.error(e);
   }
 }
-
 export async function getData() {
   try {
     const value = await AsyncStorage.getItem("user_id");
@@ -23,6 +22,8 @@ export async function getData() {
       return value
     }else{
       storeData(uuidv4())
+      setSwitch("near", false)
+      setSwitch("qready", false)
       return getData()
     }
     // return value;
@@ -30,9 +31,30 @@ export async function getData() {
     console.error(e);
   }
 }
+export async function setSwitch(mode,value) {    //mode: near(ใกล้ซักเสร็จ)    qready(ถึงคิวแล้ว)
+  try {
+    await AsyncStorage.setItem(mode, value);  
+  } catch (e) { 
+    console.error(e);
+  }
+}
+export async function getSwitch(mode) {
+  try {
+    const value = await AsyncStorage.getItem(mode);
+    if(value !== null){
+      return value
+    }else{
+      setSwitch(mode, false)
+      return getSwitch(mode)
+    }
+    // return value;
+  } catch (e) {
+    console.error(e);
+  }
+}
 
-export default function App() {
-  
+
+export default function App() { 
   return (
     <Provider store={store}>
       <NativeBaseProvider>

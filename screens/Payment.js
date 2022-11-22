@@ -85,8 +85,8 @@ function PaymentPage({route,navigation}) {
                 user_id:userid,
                 id:ranNum.toString(),
                 reserve_time:curDate,
-                // finish_time:new Date(curDate.getTime()+(30*1000)),
-                finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
+                finish_time:new Date(curDate.getTime()+(30*1000)),
+                // finish_time:new Date(curDate.getTime()+(machine.duration*60*1000)),
                 status:"washing"
             }]
             tempqueues.sort((a,b)=>{

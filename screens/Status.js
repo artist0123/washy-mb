@@ -27,11 +27,14 @@ import {
   arrayUnion, 
   arrayRemove 
 } from "firebase/firestore";
+import { async } from "@firebase/util";
+
 
 function StatusPage({navigation}) {
-    const {machineId, laundId} = {machineId:"68650",laundId:"aV419sLiUOvORzANTjYa"}
+    const {machineId, laundId,queueId} = {machineId:"68650",laundId:"aV419sLiUOvORzANTjYa",queueId:"36099"}
 
     const [showModal, setShowModal] = useState(false);
+    
 
     
     const [machine,setMachine] = useState({})
@@ -55,8 +58,9 @@ function StatusPage({navigation}) {
             // setQueues(wmachine?wmachine.queue:[])
             refmachine.current = wmachine
             queues.current = wmachine.queue
-            myqueue.current = wmachine.queue[0]
+            myqueue.current = wmachine.queue.filter((q)=>q.id == queueId)[0]
         });
+        
     }, []);
 
 //  finish time + duration*คนข้างหน้า
@@ -155,6 +159,7 @@ function StatusPage({navigation}) {
         navigation.navigate("HomeTab")
 
     }
+
     return (
         <><View>
             <Heading size="xl" bold m={8}>สถานะ</Heading>
