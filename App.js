@@ -21,8 +21,8 @@ export async function getData() {
       return value
     }else{
       storeData(uuidv4())
-      setSwitch("near", false)
-      setSwitch("qready", false)
+      setSwitch("near", "false")
+      setSwitch("qready", "false")
       return getData()
     }
     // return value;
@@ -43,7 +43,7 @@ export async function getSwitch(mode) {
     if(value !== null){
       return value
     }else{
-      setSwitch(mode, false)
+      setSwitch(mode, "false")
       return getSwitch(mode)
     }
     // return value;

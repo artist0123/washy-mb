@@ -1,7 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useKeenSliderNative } from "keen-slider/react-native";
-import { Dimensions, StyleSheet , Vibration} from "react-native";
-import { Stack, Button, Image, Box, Text, Divider, Icon,Modal } from "native-base";
+import { Dimensions, StyleSheet, Vibration } from "react-native";
+import {
+  Stack,
+  Button,
+  Image,
+  Box,
+  Text,
+  Divider,
+  Icon,
+  Modal,
+} from "native-base";
 import Cards from "../components/Cards";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../database/firebaseDB";
@@ -20,8 +29,8 @@ import {
 import { getData, getSwitch, setSwitch } from "../App";
 
 function MainPage({ navigation }) {
-  const [nearCompleteModal, setNearCompleteModal] = useState(false)
-  const [queueReadyModal, setQueueReadyModal] = useState(false)
+  const [nearCompleteModal, setNearCompleteModal] = useState(false);
+  const [queueReadyModal, setQueueReadyModal] = useState(false);
   const [windowsWidth, setWindowsWidth] = useState(
     Dimensions.get("window").width
   );
@@ -56,8 +65,8 @@ function MainPage({ navigation }) {
   useEffect(() => {
     setInterval(async () => {
       let userid = await getData();
-      let near = await getSwitch('near')
-      let qready = await getSwitch('qready')
+      let near = await getSwitch("near");
+      let qready = await getSwitch("qready");
       laundromat.current.forEach((laund, index) => {
         laund.laundromat.wmachines.forEach((mchine, index2) => {
           mchine.queue.forEach((queue, index3) => {
@@ -140,24 +149,29 @@ function MainPage({ navigation }) {
                 updateDoc(storeRef, {
                   wmachines: temp2machines,
                 });
-              }
-              else if(((new Date().getTime()-queue.finish_time.toDate().getTime())/1000/60) >= -5 && userid == queue.user_id ){
-                console.log(`${queue.id}: finish in 5 min`)
-                if(near == "true"){
-                  setNearCompleteModal(true)  
-                  setSwitch('near', false)
-                  Vibration.vibrate(5 * ONE_SECOND_IN_MS)
+              } else if (
+                (new Date().getTime() - queue.finish_time.toDate().getTime()) /
+                  1000 /
+                  60 >=
+                  -5 &&
+                userid == queue.user_id
+              ) {
+                console.log(`${queue.id}: finish in 5 min`);
+                if (near == "true") {
+                  setNearCompleteModal(true);
+                  setSwitch("near", "false");
+                  Vibration.vibrate(5 * ONE_SECOND_IN_MS);
                 }
               }
             } else if (queue.status == "in queue") {
               if (index3 == 0 && userid == queue.user_id) {
                 console.log(`${queue.id}: am ready`, typeof qready);
-                if(qready == "true"){
-                  setQueueReadyModal(true)
-                  setSwitch('qready', false)
-                  Vibration.vibrate(2 * ONE_SECOND_IN_MS)
+                if (qready == "true") {
+                  setQueueReadyModal(true);
+                  setSwitch("qready", "false");
+                  Vibration.vibrate(2 * ONE_SECOND_IN_MS);
                 }
-                console.log(near, qready)
+                console.log(near, qready);
               }
             }
           });
@@ -280,7 +294,11 @@ function MainPage({ navigation }) {
       </Stack>
 
       {/* Modal ถึงคิว */}
-      <Modal isOpen={queueReadyModal} onClose={() => setQueueReadyModal(false)} size="lg">
+      <Modal
+        isOpen={queueReadyModal}
+        onClose={() => setQueueReadyModal(false)}
+        size="lg"
+      >
         <Modal.Content maxWidth="350">
           <Modal.Body>
             <Text>ถึงคิวซักผ้าของคุณแล้ว</Text>
@@ -289,7 +307,11 @@ function MainPage({ navigation }) {
       </Modal>
 
       {/* ใกล้ซักเสร็จ modal */}
-      <Modal isOpen={nearCompleteModal} onClose={() => setNearCompleteModal(false)} size="lg">
+      <Modal
+        isOpen={nearCompleteModal}
+        onClose={() => setNearCompleteModal(false)}
+        size="lg"
+      >
         <Modal.Content maxWidth="350">
           <Modal.Body>
             <Text>ผ้าของคุณจะซักเสร็จภายใน 5 นาที</Text>
