@@ -39,11 +39,19 @@ const MapPage = ({ navigation }) => {
             {item.name}
           </Text>
           <Text fontWeight={"light"} fontSize="md">
-            {item.distance} เมตร
+            {distanceLabel(item.distance)}
           </Text>
         </Box>
       </TouchableOpacity>
     );
+  };
+
+  const distanceLabel = (dis) => {
+    if (dis >= 1000) {
+      return dis / 1000 + " กม.";
+    } else {
+      return dis + " ม.";
+    }
   };
 
   useEffect(() => {

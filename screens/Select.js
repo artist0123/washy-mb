@@ -29,7 +29,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Linking,
-  Platform
+  Platform,
 } from "react-native";
 import { log } from "react-native-reanimated";
 
@@ -37,61 +37,84 @@ function SelectPage({ route, navigation }) {
   const { laundry } = route.params;
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const [wmachines, setWmachines] = useState([]);
-  const [timelist, setTimelist] = useState([])
+  const [timelist, setTimelist] = useState([]);
 
-  const refwmachines = useRef([])
+  const refwmachines = useRef([]);
   useEffect(() => {
     // onSnapshot(collection(db, "laundromat"), (snapshot) => {
     //   setWmachines(...snapshot.docs.map((doc) => {console.log(doc.id);return doc.get("wmachines")}));
     // });
     onSnapshot(doc(db, "laundromat", laundry.docId), (snapshot) => {
-      if(!snapshot.data()){return}
+      if (!snapshot.data()) {
+        return;
+      }
       setWmachines(snapshot.data().wmachines);
-      refwmachines.current = snapshot.data().wmachines
+      refwmachines.current = snapshot.data().wmachines;
     });
   }, []);
-  useEffect(()=>{
-    setInterval(()=>{
-      let arr = []
-      refwmachines.current.forEach((val,ind)=>{
-        if(val.status == "queue"){
-          let estimate = 0
-          let filterqueue = val.queue.filter((val2,ind2)=>val2.status=="washing"||val2.status=="in queue")
-          if(filterqueue[0].status=="washing"){
-            estimate = filterqueue[0].finish_time.toDate().getTime() + (val.duration * (filterqueue.length-1))*60*1000
-          }else{
-            estimate = new Date().getTime() + (val.duration * (filterqueue.length))*60*1000
+  useEffect(() => {
+    setInterval(() => {
+      let arr = [];
+      refwmachines.current.forEach((val, ind) => {
+        if (val.status == "queue") {
+          let estimate = 0;
+          let filterqueue = val.queue.filter(
+            (val2, ind2) =>
+              val2.status == "washing" || val2.status == "in queue"
+          );
+          if (filterqueue[0].status == "washing") {
+            estimate =
+              filterqueue[0].finish_time.toDate().getTime() +
+              val.duration * (filterqueue.length - 1) * 60 * 1000;
+          } else {
+            estimate =
+              new Date().getTime() +
+              val.duration * filterqueue.length * 60 * 1000;
           }
-          
-          arr.push({machine:val,time:estimate-new Date().getTime(),count:filterqueue.length})
-          
+
+          arr.push({
+            machine: val,
+            time: estimate - new Date().getTime(),
+            count: filterqueue.length,
+          });
         }
-      })
-      setTimelist(arr)
+      });
+      setTimelist(arr);
+    }, 1000);
+  }, []);
 
-    },1000)
-  },[])
-
-  function displayTime(millis){
-    let out = ""
-    let milli = millis%1000%60%60%24
-    let sec = Math.floor(millis/1000%60)
-    let min = Math.floor(millis/1000/60%60)
-    let hour = Math.floor(millis/1000/60/60)
-    if(hour >= 1){
-        out += hour + " ชั่วโมง "
+  function displayTime(millis) {
+    let out = "";
+    let milli = (((millis % 1000) % 60) % 60) % 24;
+    let sec = Math.floor((millis / 1000) % 60);
+    let min = Math.floor((millis / 1000 / 60) % 60);
+    let hour = Math.floor(millis / 1000 / 60 / 60);
+    if (hour >= 1) {
+      out += hour + " ชั่วโมง ";
     }
-    out += min + " นาที"
-    return out
+    out += min + " นาที";
+    return out;
   }
-  
+
+  let distanceLabel;
+  if (laundry.distance >= 1000) {
+    distanceLabel = laundry.distance / 1000 + " กม.";
+  } else {
+    distanceLabel = laundry.distance + " ม.";
+  }
 
   const cards = ({ item }) => {
     // Ready State
     if (item.status == "ok") {
       return (
-        <TouchableOpacity style={[styles.card, { width: layout.width }]}
-        onPress={()=>{navigation.navigate("Reserve", {laundId:laundry.docId, machineId:item.id});}}
+        <TouchableOpacity
+          style={[styles.card, { width: layout.width }]}
+          onPress={() => {
+            navigation.navigate("Reserve", {
+              laundId: laundry.docId,
+              machineId: item.id,
+            });
+          }}
         >
           <Center flex={2} bg="coolGray.300">
             <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9" />
@@ -110,8 +133,14 @@ function SelectPage({ route, navigation }) {
       // InUse State
     } else if (item.status == "queue") {
       return (
-        <TouchableOpacity style={[styles.card, { width: layout.width }]}
-        onPress={()=>{navigation.navigate("Reserve", {laundId:laundry.docId, machineId:item.id});}}
+        <TouchableOpacity
+          style={[styles.card, { width: layout.width }]}
+          onPress={() => {
+            navigation.navigate("Reserve", {
+              laundId: laundry.docId,
+              machineId: item.id,
+            });
+          }}
         >
           <Center flex={2} bg="coolGray.300">
             {/* <Icon as={MaterialCommunityIcons } name="washing-machine" color="black" size="7"/> */}
@@ -123,8 +152,18 @@ function SelectPage({ route, navigation }) {
             </Text>
             <Text fontSize={"sm"} color="#454545">
               อีก &nbsp;
-               {timelist.filter((val,ind)=>val.machine.id == item.id)[0]?displayTime(timelist.filter((val,ind)=>val.machine.id == item.id)[0].time):"0 นาที"}
-              ({timelist.filter((val,ind)=>val.machine.id == item.id)[0]?timelist.filter((val,ind)=>val.machine.id == item.id)[0].count:"0 คิว"} คิว)
+              {timelist.filter((val, ind) => val.machine.id == item.id)[0]
+                ? displayTime(
+                    timelist.filter((val, ind) => val.machine.id == item.id)[0]
+                      .time
+                  )
+                : "0 นาที"}
+              (
+              {timelist.filter((val, ind) => val.machine.id == item.id)[0]
+                ? timelist.filter((val, ind) => val.machine.id == item.id)[0]
+                    .count
+                : "0 คิว"}{" "}
+              คิว)
             </Text>
           </Box>
         </TouchableOpacity>
@@ -168,15 +207,19 @@ function SelectPage({ route, navigation }) {
         display={"flex"}
         flexDirection="column"
       >
-        <Text fontWeight="bold" fontSize={{
-                    base: "3xl",
-                    md: "4xl",
-                    lg: "5xl"
-                }} flex={1}>
+        <Text
+          fontWeight="bold"
+          fontSize={{
+            base: "3xl",
+            md: "4xl",
+            lg: "5xl",
+          }}
+          flex={1}
+        >
           {laundry.name}
         </Text>
         <Text fontSize="md" flex={1}>
-          {laundry.distance} เมตร
+          {distanceLabel}
         </Text>
         <Link
           mb={"3"}
@@ -200,7 +243,7 @@ function SelectPage({ route, navigation }) {
 
         <Box flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
           <FlatList
-            data={wmachines.sort((a,b) => a.name.localeCompare(b.name))}
+            data={wmachines.sort((a, b) => a.name.localeCompare(b.name))}
             renderItem={cards}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ alignItems: "flex-start" }}
