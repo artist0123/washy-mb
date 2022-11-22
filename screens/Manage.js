@@ -210,7 +210,7 @@ function ManagePage({ route, navigation }) {
             //navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
           }}
         >
-          <Center flex={2} bg="coolGray.300">
+          <Center flex={2} bg="blue.500">
             <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9" />
           </Center>
           <Box flex={5} p="3">
@@ -254,7 +254,7 @@ function ManagePage({ route, navigation }) {
             //navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
           }}
         >
-          <Center flex={2} bg="coolGray.300">
+          <Center flex={2} bg="blue.500">
             <ActivityIndicator size="large" color="#6fade1" />
           </Center>
           <Box flex={5} p="3">
@@ -300,7 +300,7 @@ function ManagePage({ route, navigation }) {
             //navigation.navigate("Queue", { machineId: item.id, laundId: laundId, machineName:item.name});
           }}
         >
-          <Center flex={2} bg="coolGray.300">
+          <Center flex={2} bg="blue.500">
             <Icon as={Octicons} name="x-circle-fill" color="#fa1616" size="9" />
           </Center>
           <Box flex={5} p="3">
@@ -380,7 +380,7 @@ function ManagePage({ route, navigation }) {
             </Button>
           </Box>
         </Box>
-        <Box flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)}>
+        <Box flex={8} onLayout={(event) => setLayout(event.nativeEvent.layout)} padding={2}>
           <FlatList
             data={wmachines.sort((a, b) => a.name.localeCompare(b.name))}
             renderItem={cards}

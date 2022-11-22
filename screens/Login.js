@@ -11,6 +11,8 @@ import {
   Stack,
   Icon,
   Pressable,
+  Box,
+  NativeBaseProvider
 } from "native-base";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -22,9 +24,16 @@ import {
 } from "firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
 import {userdata, user_id} from "../store/userSlice";
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 function LoginPage({ navigation }) {
+  const config = {
+    dependencies: {
+      'linear-gradient': LinearGradient
+    }
+  };
+
   const [login, setLogin] = useState(false);
   const [show, setShow] = useState(false);
 
@@ -91,35 +100,35 @@ function LoginPage({ navigation }) {
   function render() {
     if (session.isLoggedIn) {
       return (
-        <Stack space={4} w="75%" maxW="500px" mx="auto">
-          <Button
-            bg="indigo.700"
-            h="100%"
-            style={{ alignSelf: "center", height: 50, width: 200 }}
-            onPress={handleLogout}
-          >
-            <Text fontSize="xl" color="white">
-              ออกจากระบบ
-            </Text>
-          </Button>
+          <Stack space={4} w="75%" maxW="500px" mx="auto" marginTop={20}>
+            <Button
+              bg="indigo.700"
+              h="100%"
+              style={{ alignSelf: "center", height: 50, width: 200, elevation: 5}}
+              onPress={handleLogout}
+            >
+              <Text fontSize="xl" color="white">
+                ออกจากระบบ
+              </Text>
+            </Button>
 
-          <Button
-            bg="indigo.700"
-            h="100%"
-            style={{ alignSelf: "center", height: 50, width: 200 }}
-            onPress={() => {
-              navigation.navigate("ManageLaund");
-            }}
-          >
-            <Text fontSize="xl" color="white">
-              จัดการร้าน
-            </Text>
-          </Button>
-        </Stack>
+            <Button
+              bg="indigo.700"
+              h="100%"
+              style={{ alignSelf: "center", height: 50, width: 200, elevation: 5}}
+              onPress={() => {
+                navigation.navigate("ManageLaund");
+              }}
+            >
+              <Text fontSize="xl" color="white">
+                จัดการร้าน
+              </Text>
+            </Button>
+          </Stack>
       );
     } else {
       return (
-        <Stack space={4} w="75%" maxW="500px" mx="auto">
+        <Stack space={4} w="75%" maxW="500px" mx="auto" >
           <Text fontSize="2xl">Username</Text>
           <Input w="100%" value={username} placeholder="Username" onChangeText={(txt)=>setUsername(txt)} />
           <Text fontSize="2xl">Password</Text>
@@ -148,10 +157,10 @@ function LoginPage({ navigation }) {
           <Button
             bg="indigo.700"
             h="100%"
-            style={{ alignSelf: "center", height: 50, width: 200 }}
+            style={{ alignSelf: "center", height: 50, width: 200, elevation: 5 }}
             onPress={handleLogin}
           >
-            <Text fontSize="xl" color="white">
+            <Text fontSize="xl" color="white" >
               เข้าสู่ระบบ
             </Text>
           </Button>
@@ -160,10 +169,20 @@ function LoginPage({ navigation }) {
     }
   }
   return (
-    <VStack space={10} alignItems="center" flex={1} mt="5">
-      <FontAwesome name="user-circle" size={250} color="black" mt="5" />
-      {render()}
-    </VStack>
+    <NativeBaseProvider config={config}>
+      <Box h={[335, 400, 500]} bg={{
+        linearGradient: {
+          colors: ['lightBlue.300', 'violet.800'],
+          start: [0, 0],
+          end: [1, 1]
+        }
+      }}>
+        <VStack space={10} alignItems="center" flex={1} mt="12">
+            <FontAwesome name="user-circle" size={250} color="white"/>
+            {render()}
+        </VStack>
+      </Box>
+    </NativeBaseProvider>
   );
 }
 

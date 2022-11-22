@@ -70,8 +70,8 @@ function EditPage({route, navigation}) {
     const cancel = async() => {
         setWm_name(initWm.name)
         setWm_capacity(initWm.capacity)
-        setWm_hot(initWm.price.hot)
-        setWm_cold(initWm.price.cold)
+        setWm_hot(String(initWm.price.hot))
+        setWm_cold(String(initWm.price.cold))
         setWm_duration(initWm.duration)
         setWm_status(initWm.status)
     }
@@ -129,24 +129,24 @@ function EditPage({route, navigation}) {
     <VStack space={7} flex={1} alignItems="center" justifyContent="center" mt="5" w={[380, 380, 380]} >
         <Stack space={4} w="100%" >
             <Text fontSize="2xl">ชื่อเครื่องซักผ้า</Text>
-            <Input w="100%" variant="underlined" value={wm_name} onChangeText={(name)=>setWm_name(name)}/>
+            <Input w="100%" variant="rounded" borderColor='primary.500' value={wm_name} onChangeText={(name)=>setWm_name(name)}/>
             <Text fontSize="2xl">น้ำหนัก</Text>
-            <Input w="100%" variant="underlined" value={wm_capacity} onChangeText={(capacity)=>setWm_capacity(capacity)}/>
+            <Input w="100%" variant="rounded" borderColor='primary.500' value={wm_capacity} onChangeText={(capacity)=>setWm_capacity(capacity)}/>
         </Stack>
 
         <HStack space={4} w="100%">
             <VStack w="50%">
                 <Text fontSize="xl">ราคาน้ำร้อน</Text>
-                <Input w="90%" variant="underlined" value={wm_hot} onChangeText={(hot)=>setWm_hot(hot)}/>
+                <Input w="90%" variant="rounded" borderColor='primary.500' value={wm_hot} onChangeText={(hot)=>setWm_hot(hot)}/>
                 <Text fontSize="xl">เวลาซัก</Text>
-                <Input w="90%" variant="underlined"value={wm_duration} onChangeText={(duration)=>setWm_duration(duration)}/>
+                <Input w="90%" variant="rounded" borderColor='primary.500' value={wm_duration} onChangeText={(duration)=>setWm_duration(duration)}/>
             </VStack>
 
             <VStack w="50%">
                 <Text fontSize="xl" >ราคาน้ำเย็น</Text>
-                <Input w="90%" variant="underlined" value={wm_cold} onChangeText={(cold)=>setWm_cold(cold)}/>
+                <Input w="90%" variant="rounded" borderColor='primary.500' value={wm_cold} onChangeText={(cold)=>setWm_cold(cold)}/>
                 <Text fontSize="xl">สถานะ</Text>
-                <Select selectedValue={wm_status} w="90%" accessibilityLabel="สถานะ" placeholder="สถานะ" _selectedItem={{
+                <Select selectedValue={wm_status} variant="rounded" borderColor='primary.500' w="90%" accessibilityLabel="สถานะ" placeholder="สถานะ" _selectedItem={{
                         bg: "primary.400",endIcon: <CheckIcon size="5" />}} onValueChange={(status) => setWm_status(status)}>
                     <Select.Item label="ดี" value="ok" />
                     <Select.Item label="พัง" value="notok"/>

@@ -150,7 +150,7 @@ function ManageLaundPage({ navigation }) {
   const cards = ({ item }) => {
     return (
       <TouchableOpacity
-        style={[styles.card, { width: layout.width }]}
+        style={[styles.card, { width: layout.width}]}
         onPress={() => {
           navigation.navigate("Manage", {
             laundName: item.laundromat.name,
@@ -158,11 +158,11 @@ function ManageLaundPage({ navigation }) {
           });
         }}
       >
-        <Center flex={2} bg="coolGray.300">
+        <Center flex={2} bg="blue.500">
           <MaterialCommunityIcons
             name="washing-machine"
             size={60}
-            color="black"
+            color="white"
           />
         </Center>
         <Box flex={5} p="3">
@@ -223,6 +223,7 @@ function ManageLaundPage({ navigation }) {
           <Box
             flex={8}
             onLayout={(event) => setLayout(event.nativeEvent.layout)}
+            padding={2}
           >
             <FlatList
               data={laundromat.sort((a,b) => a.laundromat.name.localeCompare(b.laundromat.name))}
