@@ -160,7 +160,7 @@ function MainPage({ navigation }) {
                 if (near == "true") {
                   setNearCompleteModal(true);
                   setSwitch("near", "false");
-                  Vibration.vibrate(5 * ONE_SECOND_IN_MS);
+                  Vibration.vibrate(5 * 1000);
                 }
               }
             } else if (queue.status == "in queue") {
@@ -169,7 +169,7 @@ function MainPage({ navigation }) {
                 if (qready == "true") {
                   setQueueReadyModal(true);
                   setSwitch("qready", "false");
-                  Vibration.vibrate(2 * ONE_SECOND_IN_MS);
+                  Vibration.vibrate(2 * 1000);
                 }
                 console.log(near, qready);
               }

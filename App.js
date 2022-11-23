@@ -51,9 +51,14 @@ export async function getSwitch(mode) {
     console.error(e);
   }
 }
+function initData(){
+  getSwitch('near')
+  getSwitch('qready')
+  getData()
+}
 
-
-export default function App() { 
+export default function App() {
+  initData() 
   return (
     <Provider store={store}>
       <NativeBaseProvider>
