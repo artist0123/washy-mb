@@ -31,6 +31,10 @@ import { getData, getSwitch, setSwitch } from "../App";
 function MainPage({ navigation }) {
   const [nearCompleteModal, setNearCompleteModal] = useState(false);
   const [queueReadyModal, setQueueReadyModal] = useState(false);
+  const [queueEmptyModal, setQueueEmptyModal] = useState(false)
+
+  const [emptyMacName, setEmptyMacName] = useState("None")
+  const [emptyLaundName, setEMptyLaundName] = useState("None")
   const [windowsWidth, setWindowsWidth] = useState(
     Dimensions.get("window").width
   );
@@ -62,13 +66,29 @@ function MainPage({ navigation }) {
       });
     });
   }, []);
+  function filterQueue(queues = []) {
+    let whitelist = { washing: 0, "in queue": 0 };
+    return queues.filter((val) => {
+      return whitelist[val.status] != undefined;
+    });
+  }
   useEffect(() => {
     setInterval(async () => {
       let userid = await getData();
       let near = await getSwitch("near");
       let qready = await getSwitch("qready");
       laundromat.current.forEach((laund, index) => {
-        laund.laundromat.wmachines.forEach((mchine, index2) => {
+        laund.laundromat.wmachines.forEach(async(mchine, index2) => {
+          let alertempty = await getSwitch(mchine.id)
+          let countqueue = filterQueue(mchine.queue).length
+          if(countqueue == 0 && alertempty == "true"){
+            console.log(alertempty, mchine.id)  
+            setEMptyLaundName(laund.laundromat.name)
+            setEmptyMacName(mchine.name)
+            setQueueEmptyModal(true);
+            setSwitch(mchine.id, "false");
+            Vibration.vibrate(2 * 1000);
+          }
           mchine.queue.forEach((queue, index3) => {
             if (queue.status == "washing") {
               console.log(
@@ -119,13 +139,7 @@ function MainPage({ navigation }) {
                   let minus = sweight[a.status] - sweight[b.status];
                   return isNaN(minus) ? 0 : minus;
                 });
-                function filterQueue(queues = []) {
-                  let whitelist = { washing: 0, "in queue": 0 };
-                  console.log(queues);
-                  return queues.filter((val) => {
-                    return whitelist[val.status] != undefined;
-                  });
-                }
+                
                 console.log(filterQueue(temp2queues));
                 const temp2machines = [
                   ...tempmachines,
@@ -156,7 +170,6 @@ function MainPage({ navigation }) {
                   -5 &&
                 userid == queue.user_id
               ) {
-                console.log(`${queue.id}: finish in 5 min`);
                 if (near == "true") {
                   setNearCompleteModal(true);
                   setSwitch("near", "false");
@@ -165,13 +178,11 @@ function MainPage({ navigation }) {
               }
             } else if (queue.status == "in queue") {
               if (index3 == 0 && userid == queue.user_id) {
-                console.log(`${queue.id}: am ready`, typeof qready);
                 if (qready == "true") {
                   setQueueReadyModal(true);
                   setSwitch("qready", "false");
                   Vibration.vibrate(2 * 1000);
                 }
-                console.log(near, qready);
               }
             }
           });
@@ -315,6 +326,19 @@ function MainPage({ navigation }) {
         <Modal.Content maxWidth="350">
           <Modal.Body>
             <Text>ผ้าของคุณจะซักเสร็จภายใน 5 นาที</Text>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+
+      {/*queue empty modal */}
+      <Modal
+        isOpen={queueEmptyModal}
+        onClose={() => setQueueEmptyModal(false)}
+        size="lg"
+      >
+        <Modal.Content maxWidth="350">
+          <Modal.Body>
+            <Text>{emptyMacName} {emptyLaundName} คิวว่างแล้ว</Text>
           </Modal.Body>
         </Modal.Content>
       </Modal>

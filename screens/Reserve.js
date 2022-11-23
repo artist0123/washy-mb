@@ -27,17 +27,24 @@ import {
   arrayUnion, 
   arrayRemove 
 } from "firebase/firestore";
-import { getData } from "../App";
+import { getData, getSwitch, setSwitch } from "../App";
 
 
  const isActive = "muted.200"
 function ReservePage({route, navigation}) {
   const {machineId, laundId} = route.params
+  const [queueEmptyEnable, setQueueEmptyEnable] = useState(false)
 
   const [queues, setQueues] = useState([])
   const [machine,setMachine] = useState({})
   const [laundInfo, setLaundInfo] = useState({})
   const [wmachines, setWmachines] = useState([])
+
+  async function emptyToggle(val){
+    setQueueEmptyEnable(val=="true")   
+    await setSwitch(machineId, val)
+    console.log(await getSwitch(machineId), val,"near")
+}
 
   useEffect(() => {
     onSnapshot(doc(db, "laundromat",laundId), (snapshot) => {
@@ -48,6 +55,9 @@ function ReservePage({route, navigation}) {
       setLaundInfo(snapshot.data())
       setWmachines(snapshot.data().wmachines)
     });
+    (async()=>{
+      setQueueEmptyEnable((await getSwitch(machineId))=="true")
+  })()
   }, []);
   function filterQueue(queues=[]){
     let whitelist = {"washing":0,"in queue":0}
@@ -115,15 +125,15 @@ function ReservePage({route, navigation}) {
             <Text fontSize="xl" color="white">จองคิว</Text>
         </Button>:
         <Button bg="muted.400"  style={{alignSelf:'center', height:80, width:300}}
-        onPress={()=>{navigation.navigate("Payment", {laundId:laundId, machineId:machineId,queueId:null})}}
-        // onPress={()=>{navigation.navigate("QRcode", {laundId:laundId, machineId:machineId,laundName:laundInfo.name,queueId:null})}}
+        // onPress={()=>{navigation.navigate("Payment", {laundId:laundId, machineId:machineId,queueId:null})}}
+        onPress={()=>{navigation.navigate("QRcode", {laundId:laundId, machineId:machineId,laundName:laundInfo.name,queueId:null})}}
         >
             <Text fontSize="xl" color="white">ซักผ้า</Text>
         </Button>}
 
         
         <HStack space={10} alignItems="center">
-            <Switch size="lg" ml={5} isDisabled={!filterQueue(queues).length>0}/>
+            <Switch size="lg" ml={5} isDisabled={!filterQueue(queues).length>0} value={queueEmptyEnable} onValueChange={(val)=>{emptyToggle(val.toString())}}/>
             <Text fontSize="xl" color={!filterQueue(queues).length>0?isActive:""}>เตือนฉันถ้ามีคิวว่าง</Text>
         </HStack>  
     </VStack>
