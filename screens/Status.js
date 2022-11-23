@@ -51,12 +51,12 @@ function StatusPage({navigation}) {
     const refmachine = useRef({})
 
     async function nearToggle(val){
-        setNearSwitchEnable(val)   
+        setNearSwitchEnable(val=="true")   
         await setSwitch('near', val)
         console.log(await getSwitch('near'), val,"near")
     }
     async function qreadyToggle(val){
-        setQreadySwitchEnable(val)   
+        setQreadySwitchEnable(val=="true")   
         await setSwitch('qready', val)
         console.log(await getSwitch('qready'), val,"qready")
     }
@@ -208,11 +208,11 @@ function StatusPage({navigation}) {
 
             {mode=="washing"?
             <HStack space={10} alignItems="center">
-                <Switch size="lg" ml={5} value={nearSwitchEnable} onValueChange={(val)=>{nearToggle(val)}}/>
+                <Switch size="lg" ml={5} value={nearSwitchEnable} onValueChange={(val)=>{nearToggle(val.toString())}}/>
                 <Text fontSize="xl">เตือนฉันถ้าใกล้ซักเสร็จ</Text>
             </HStack>:mode=="queueing"?
             <HStack space={10} alignItems="center">
-                <Switch size="lg" ml={5} value={qreadySwitchEnable} onValueChange={(val)=>{qreadyToggle(val)}}/>
+                <Switch size="lg" ml={5} value={qreadySwitchEnable} onValueChange={(val)=>{qreadyToggle(val.toString())}}/>
                 <Text fontSize="xl">เตือนฉันถ้าถึงคิวของฉัน</Text>
             </HStack>  :""}
             
