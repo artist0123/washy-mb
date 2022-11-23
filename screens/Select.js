@@ -1,28 +1,8 @@
 import React, { useRef } from "react";
-import { db, auth } from "../database/firebaseDB";
-import {
-  collection,
-  doc,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
-import {
-  Center,
-  Container,
-  Box,
-  Text,
-  Image,
-  FlatList,
-  Icon,
-  Link,
-} from "native-base";
-import {
-  AntDesign,
-  Octicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { db } from "../database/firebaseDB";
+import { doc, onSnapshot } from "firebase/firestore";
+import { Center, Box, Text, Image, FlatList, Icon, Link } from "native-base";
+import { AntDesign, Octicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -31,7 +11,6 @@ import {
   Linking,
   Platform,
 } from "react-native";
-import { log } from "react-native-reanimated";
 
 function SelectPage({ route, navigation }) {
   const { laundry } = route.params;

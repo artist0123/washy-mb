@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import {
-  Center,
-  Container,
-  Box,
   Text, Button,View,Icon
 } from "native-base";
-import { TouchableOpacity } from 'react-native';
 import { StyleSheet} from "react-native";
 import { Camera, CameraType, PermissionStatus } from 'expo-camera';
 import { BarCodeScanner } from 'expo-barcode-scanner';

@@ -4,22 +4,16 @@ import {onAuthStateChanged } from "firebase/auth";
 import {
   addDoc,
   collection,
-  getDocs,
   onSnapshot,
-  query,
-  where,
   GeoPoint,
   deleteDoc,
   doc,
 } from "firebase/firestore";
 import {
   Center,
-  Container,
   Box,
   Text,
-  Image,
   FlatList,
-  Icon,
   Button,
   IconButton,
   Modal,
@@ -27,8 +21,6 @@ import {
   Input,
 } from "native-base";
 import {
-  AntDesign,
-  Octicons,
   MaterialCommunityIcons,
   FontAwesome5,
 } from "@expo/vector-icons";

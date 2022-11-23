@@ -7,7 +7,8 @@ import {
 import { Center, Box, Text, Icon } from "native-base";
 import { StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 export default function Cards({ item, layout, onPress }) {
-  console.log("w: " + layout.width + " h: " + layout.height);
+  // console.log("w: " + layout.width + " h: " + layout.height);
+  // console.log(item)
   if (!item) {
     return (
       <Center h="100%" mb="3%">
@@ -23,10 +24,13 @@ export default function Cards({ item, layout, onPress }) {
       </Center>
     );
   }
-  // Ready State
-  else if (item.state == "ok") {
+  // Ready status
+  else if (item.status == "ok") {
     return (
-      <TouchableOpacity style={[styles.card, { width: layout.width }]}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.card, { width: layout.width }]}
+      >
         <Center flex={2} bg="coolGray.300">
           <Icon as={AntDesign} name="checkcircle" color="#00f710" size="9" />
         </Center>
@@ -35,16 +39,19 @@ export default function Cards({ item, layout, onPress }) {
             {item.name}
           </Text>
           <Text fontSize={"sm"} color="#454545">
-            {item.capacity} กิโลกรัม
+            ว่าง
           </Text>
         </Box>
       </TouchableOpacity>
     );
 
-    // InUse State
-  } else if (item.state == "queue") {
+    // InUse status
+  } else if (item.status == "queue") {
     return (
-      <TouchableOpacity style={[styles.card, { width: layout.width }]}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.card, { width: layout.width }]}
+      >
         <Center flex={2} bg="coolGray.300">
           {/* <Icon as={MaterialCommunityIcons } name="washing-machine" color="black" size="7"/> */}
           <ActivityIndicator size="large" color="#6fade1" />
@@ -54,16 +61,19 @@ export default function Cards({ item, layout, onPress }) {
             {item.name}
           </Text>
           <Text fontSize={"sm"} color="#454545">
-            อีก 40 นาที(1 คิว)
+            อีก {item.queue_length} คิว
           </Text>
         </Box>
       </TouchableOpacity>
     );
 
-    //NotReady State
-  } else if (item.state == "notok") {
+    //NotReady status
+  } else if (item.status == "notok") {
     return (
-      <TouchableOpacity style={[styles.card, { width: layout.width }]}>
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.card, { width: layout.width }]}
+      >
         <Center flex={2} bg="coolGray.300">
           <Icon as={Octicons} name="x-circle-fill" color="#fa1616" size="9" />
         </Center>

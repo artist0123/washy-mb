@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input, Text , Box} from "native-base";
-import {View} from "react-native";
 import SvgQRCode from 'react-native-qrcode-svg'
 function GeneratorPage() {
     const [selectLaund, setSelectLaund] = useState("aV419sLiUOvORzANTjYa")

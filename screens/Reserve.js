@@ -12,20 +12,11 @@ import {
 
 } from "native-base";
 import { useState, useEffect } from "react";
-import { db, auth } from "../database/firebaseDB";
+import { db } from "../database/firebaseDB";
 import {
-  collection,
   doc,
-  getDocs,
   onSnapshot,
-  query,
-  where,
-  setDoc,
-  addDoc,
-  getDoc,
   updateDoc,
-  arrayUnion, 
-  arrayRemove 
 } from "firebase/firestore";
 import { getData, getSwitch, setSwitch } from "../App";
 

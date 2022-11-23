@@ -2,33 +2,22 @@ import React from "react";
 
 import {
   Center,
-  Container,
   Box,
   Text,
-  Image,
   FlatList,
   Icon,
   Button,
   IconButton,
   Modal
 } from "native-base";
-import { AntDesign,Octicons,MaterialCommunityIcons ,FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign ,FontAwesome5 } from "@expo/vector-icons";
 import { useState,useEffect } from "react";
-import { StyleSheet,  TouchableOpacity ,ActivityIndicator } from "react-native";
-import { db, auth } from "../database/firebaseDB";
+import { StyleSheet ,ActivityIndicator } from "react-native";
+import { db } from "../database/firebaseDB";
 import {
-  collection,
   doc,
-  getDocs,
   onSnapshot,
-  query,
-  where,
-  setDoc,
-  addDoc,
-  getDoc,
   updateDoc,
-  arrayUnion, 
-  arrayRemove 
 } from "firebase/firestore";
 
 

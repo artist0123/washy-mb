@@ -9,7 +9,7 @@ import { uuidv4 } from "@firebase/util";
 async function storeData(value) {
   try {
     await AsyncStorage.setItem("user_id", value);
-  } catch (e) { 
+  } catch (e) {
     console.error(e);
   }
 }
@@ -18,47 +18,51 @@ export async function getData() {
     const value = await AsyncStorage.getItem("user_id");
     // console.log("AsyncStorage value: ");
     if (value !== null) {
-      return value
-    }else{
-      storeData(uuidv4())
-      setSwitch("near", "false")
-      setSwitch("qready", "false")
-      return getData()
+      // storeData("abcdef");
+      // console.log(value);
+      return value;
+    } else {
+      storeData(uuidv4());
+      setSwitch("near", "false");
+      setSwitch("qready", "false");
+      return getData();
     }
+    console.log(first);
     // return value;
   } catch (e) {
     console.error(e);
   }
 }
-export async function setSwitch(mode,value) {    //mode: near(ใกล้ซักเสร็จ)    qready(ถึงคิวแล้ว)
+export async function setSwitch(mode, value) {
+  //mode: near(ใกล้ซักเสร็จ)    qready(ถึงคิวแล้ว)
   try {
-    await AsyncStorage.setItem(mode, value);  
-  } catch (e) { 
+    await AsyncStorage.setItem(mode, value);
+  } catch (e) {
     console.error(e);
   }
 }
 export async function getSwitch(mode) {
   try {
     const value = await AsyncStorage.getItem(mode);
-    if(value !== null){
-      return value
-    }else{
-      setSwitch(mode, "false")
-      return getSwitch(mode)
+    if (value !== null) {
+      return value;
+    } else {
+      setSwitch(mode, "false");
+      return getSwitch(mode);
     }
     // return value;
   } catch (e) {
     console.error(e);
   }
 }
-function initData(){
-  getSwitch('near')
-  getSwitch('qready')
-  getData()
+function initData() {
+  getSwitch("near");
+  getSwitch("qready");
+  getData();
 }
 
 export default function App() {
-  initData() 
+  initData();
   return (
     <Provider store={store}>
       <NativeBaseProvider>

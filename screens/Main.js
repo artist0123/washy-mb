@@ -15,14 +15,8 @@ import Cards from "../components/Cards";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../database/firebaseDB";
 import {
-  addDoc,
   collection,
-  getDocs,
   onSnapshot,
-  query,
-  where,
-  GeoPoint,
-  deleteDoc,
   doc,
   updateDoc,
 } from "firebase/firestore";
@@ -31,10 +25,10 @@ import { getData, getSwitch, setSwitch } from "../App";
 function MainPage({ navigation }) {
   const [nearCompleteModal, setNearCompleteModal] = useState(false);
   const [queueReadyModal, setQueueReadyModal] = useState(false);
-  const [queueEmptyModal, setQueueEmptyModal] = useState(false)
+  const [queueEmptyModal, setQueueEmptyModal] = useState(false);
 
-  const [emptyMacName, setEmptyMacName] = useState("None")
-  const [emptyLaundName, setEMptyLaundName] = useState("None")
+  const [emptyMacName, setEmptyMacName] = useState("None");
+  const [emptyLaundName, setEMptyLaundName] = useState("None");
   const [windowsWidth, setWindowsWidth] = useState(
     Dimensions.get("window").width
   );
@@ -51,12 +45,7 @@ function MainPage({ navigation }) {
     slides,
     loop: true,
   });
-  const wmachine = {
-    id: "1",
-    name: "เครื่องซักผ้า1",
-    capacity: 10,
-    state: "okss",
-  };
+  const [wmachine, setWmachine] = useState(null);
 
   const laundromat = useRef([]);
   useEffect(() => {
@@ -66,6 +55,56 @@ function MainPage({ navigation }) {
       });
     });
   }, []);
+
+  // function wmCard() {
+  //   const [wmachine, setWmachine] = useState(null);
+  //   useEffect(() => {
+  //     async function getWmachine() {
+  //       let userid = await getData();
+  //       laundromat.current.forEach((laund, index) => {
+  //         laund.laundromat.wmachines.forEach((mchine, index2) => {
+  //           mchine.queue.forEach((queue, index3) => {
+  //             // console.log(userid);
+  //             // console.log(queue.user_id);
+  //             if (queue.user_id == userid) {
+  //               // console.log(queue);
+  //               // console.log(mchine);
+  //               let wm = {
+  //                 name: mchine.name,
+  //                 queue_length: mchine.queue.length,
+  //                 machineId: mchine.id,
+  //                 laundId: laund.docId,
+  //                 queueId: queue.id,
+  //                 status: mchine.status,
+  //               };
+  //               console.log(wm);
+  //               setWmachine(wm);
+  //             }
+  //           });
+  //         });
+  //       });
+  //     }
+  //     if (wmachine == null) {
+  //       console.log("getting wm");
+  //       // setTimeout(() => {
+  //       //   getWmachine();
+  //       // }, 5000);
+  //       getWmachine();
+  //       console.log(wmachine);
+  //     }
+  //   }, [laundromat]);
+  //   return (
+  //     <Box
+  //       flex={8}
+  //       onLayout={(event) => {
+  //         setLayout(event.nativeEvent.layout);
+  //       }}
+  //     >
+  //       <Cards item={wmachine} onPress={() => {}} layout={layout}></Cards>
+  //     </Box>
+  //   );
+  // }
+
   function filterQueue(queues = []) {
     let whitelist = { washing: 0, "in queue": 0 };
     return queues.filter((val) => {
@@ -78,18 +117,30 @@ function MainPage({ navigation }) {
       let near = await getSwitch("near");
       let qready = await getSwitch("qready");
       laundromat.current.forEach((laund, index) => {
-        laund.laundromat.wmachines.forEach(async(mchine, index2) => {
-          let alertempty = await getSwitch(mchine.id)
-          let countqueue = filterQueue(mchine.queue).length
-          if(countqueue == 0 && alertempty == "true"){
-            console.log(alertempty, mchine.id)  
-            setEMptyLaundName(laund.laundromat.name)
-            setEmptyMacName(mchine.name)
+        laund.laundromat.wmachines.forEach(async (mchine, index2) => {
+          let alertempty = await getSwitch(mchine.id);
+          let countqueue = filterQueue(mchine.queue).length;
+          if (countqueue == 0 && alertempty == "true") {
+            console.log(alertempty, mchine.id);
+            setEMptyLaundName(laund.laundromat.name);
+            setEmptyMacName(mchine.name);
             setQueueEmptyModal(true);
             setSwitch(mchine.id, "false");
             Vibration.vibrate(2 * 1000);
           }
           mchine.queue.forEach((queue, index3) => {
+            if (queue.user_id == userid) {
+              let wm = {
+                name: mchine.name,
+                queue_length: mchine.queue.length,
+                machineId: mchine.id,
+                laundId: laund.docId,
+                queueId: queue.id,
+                status: mchine.status,
+              };
+              // console.log(wm);
+              setWmachine(wm);
+            }
             if (queue.status == "washing") {
               console.log(
                 `${queue.id}: ${
@@ -139,7 +190,7 @@ function MainPage({ navigation }) {
                   let minus = sweight[a.status] - sweight[b.status];
                   return isNaN(minus) ? 0 : minus;
                 });
-                
+
                 console.log(filterQueue(temp2queues));
                 const temp2machines = [
                   ...tempmachines,
@@ -294,11 +345,25 @@ function MainPage({ navigation }) {
               </Text>
             </Box>
 
+            {/* {wmCard()} */}
+
             <Box
               flex={8}
-              onLayout={(event) => setLayout(event.nativeEvent.layout)}
+              onLayout={(event) => {
+                setLayout(event.nativeEvent.layout);
+              }}
             >
-              <Cards item={wmachine} onPress={() => {}} layout={layout}></Cards>
+              <Cards
+                item={wmachine}
+                onPress={() => {
+                  navigation.navigate("Status", {
+                    machineId: wmachine.machineId,
+                    laundId: wmachine.laundId,
+                    queueId: wmachine.queueId,
+                  });
+                }}
+                layout={layout}
+              ></Cards>
             </Box>
           </Box>
         </Stack>
@@ -338,7 +403,9 @@ function MainPage({ navigation }) {
       >
         <Modal.Content maxWidth="350">
           <Modal.Body>
-            <Text>{emptyMacName} {emptyLaundName} คิวว่างแล้ว</Text>
+            <Text>
+              {emptyMacName} {emptyLaundName} คิวว่างแล้ว
+            </Text>
           </Modal.Body>
         </Modal.Content>
       </Modal>

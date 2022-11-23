@@ -2,15 +2,11 @@ import React from "react";
 
 import {
   Center,
-  Container,
   Box,
   Text,
-  Divider,
   Flex,
   Switch,
   IconButton,
-  Spacer,
-  Icon,
   Modal
 } from "native-base";
 import { AntDesign,FontAwesome,Entypo   } from "@expo/vector-icons";
@@ -33,9 +29,6 @@ import {
 } from "firebase/firestore";
 import { async } from "@firebase/util";
 import { getData } from "../App";
-
-
-
 
 function PaymentPage({route,navigation}) {
     const {machineId, laundId,queueId} = route.params
