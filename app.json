@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "washy-mb",
-    "slug": "washy-mb",
+    "name": "Washy",
+    "slug": "Washy",
     "owner": "artist0123",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,7 +15,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.example.Washy",
@@ -31,12 +33,17 @@
         }
       },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "95f563ca-6f35-4523-982b-9aaa0df02bce"
+      }
     }
   }
 }
