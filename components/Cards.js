@@ -8,8 +8,23 @@ import { Center, Box, Text, Icon } from "native-base";
 import { StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 export default function Cards({ item, layout, onPress }) {
   console.log("w: " + layout.width + " h: " + layout.height);
+  if (!item) {
+    return (
+      <Center h="100%" mb="3%">
+        <Icon
+          as={MaterialCommunityIcons}
+          name="null"
+          color="primary.100"
+          size="125"
+        />
+        <Text fontSize="xl" flex={1}>
+          ไม่มีการซัก
+        </Text>
+      </Center>
+    );
+  }
   // Ready State
-  if (item.state == "ok") {
+  else if (item.state == "ok") {
     return (
       <TouchableOpacity style={[styles.card, { width: layout.width }]}>
         <Center flex={2} bg="coolGray.300">
@@ -61,20 +76,6 @@ export default function Cards({ item, layout, onPress }) {
           </Text>
         </Box>
       </TouchableOpacity>
-    );
-  } else {
-    return (
-      <Center h="100%" mb="3%">
-        <Icon
-            as={MaterialCommunityIcons}
-            name="null"
-            color="primary.100"
-            size="125"
-          />
-        <Text  fontSize="xl" flex={1}>
-          ไม่มีการซัก
-        </Text>
-      </Center>
     );
   }
 }
