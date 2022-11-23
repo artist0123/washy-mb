@@ -153,12 +153,12 @@ function ManagePage({ route, navigation }) {
         id: ranNum.toString(),
         name: "เครื่องซักผ้า#" + ranNum,
         price: {
-          cold: Math.round(Math.random() * 50),
-          hot: Math.round(Math.random() * 80),
+          cold: 30,
+          hot: 40,
         },
-        duration: Math.round(Math.random() * 120),
-        capacity: Math.round(Math.random() * 20),
-        status: ["ok", "notok"][Math.round(Math.random())],
+        duration: 30,
+        capacity: 10,
+        status: "ok",
         queue: [],
       },
     ];
