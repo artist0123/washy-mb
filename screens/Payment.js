@@ -7,7 +7,8 @@ import {
   Flex,
   Switch,
   IconButton,
-  Modal
+  Modal,
+  Icon
 } from "native-base";
 import { AntDesign,FontAwesome,Entypo   } from "@expo/vector-icons";
 import { View } from "react-native";

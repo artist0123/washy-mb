@@ -69,18 +69,18 @@ function EditPage({route, navigation}) {
 
     const cancel = async() => {
         setWm_name(initWm.name)
-        setWm_capacity(initWm.capacity)
+        setWm_capacity(String(initWm.capacity))
         setWm_hot(String(initWm.price.hot))
         setWm_cold(String(initWm.price.cold))
-        setWm_duration(initWm.duration)
+        setWm_duration(String(initWm.duration))
         setWm_status(initWm.status)
     }
 
     const updateWmachine = async(id)=>{
-        //const storeRef = doc(db, "laundromat", laundId)
+        const storeRef = doc(db, "laundromat", laundId)
 
         //ไว้ test
-        const storeRef = doc(db, "cities", "LA")
+        // const storeRef = doc(db, "cities", "LA")
 
         const tempmachines = wmachines.filter(val=>{
             if(val.id != machineId){

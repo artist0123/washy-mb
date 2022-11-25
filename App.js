@@ -6,6 +6,8 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { uuidv4 } from "@firebase/util";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs();
 async function storeData(value) {
   try {
     await AsyncStorage.setItem("user_id", value);
